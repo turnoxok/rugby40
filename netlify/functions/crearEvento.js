@@ -1,23 +1,15 @@
-// crearEvento.js - Netlify Function
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
   try {
-    // Verificamos que event.body exista
-    if (!event.body) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ status: 'error', message: 'No se recibieron datos.' })
-      };
-    }
+    console.log('Recibido en Netlify Function:', event.body);
 
     const datos = JSON.parse(event.body);
 
-    // URL de tu Google Apps Script Web App
     const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzfXo7YpTGli_JUvCuq8oFvBeMiQOqH_3n3YXIFh2UK__n04yyuHnbULm3foveoFOle/exec';
 
-    // Llamada al Web App con manejo de errores
     let data = { status: 'error', message: 'No se pudo conectar con Web App' };
+
     try {
       const response = await fetch(WEBAPP_URL, {
         method: 'POST',
@@ -25,9 +17,11 @@ exports.handler = async function(event, context) {
         body: JSON.stringify(datos)
       });
 
-      // Intentamos parsear como JSON si hay respuesta
+      console.log('Respuesta del Web App:', response.status, response.statusText);
+
       if (response.ok) {
         data = await response.json();
+        console.log('JSON recibido del Web App:', data);
       } else {
         data = { status: 'error', message: `Web App respondió con ${response.status}` };
       }
@@ -36,7 +30,6 @@ exports.handler = async function(event, context) {
       data = { status: 'error', message: 'Error conectando con Web App' };
     }
 
-    // Retornamos siempre JSON al frontend
     return {
       statusCode: 200,
       body: JSON.stringify(data)
