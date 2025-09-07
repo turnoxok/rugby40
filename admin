@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin - Rugby Veteranos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { display: flex; min-height: 100vh; background: #f5f6fa; }
+
+    /* Sidebar */
+    .sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
+    .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
+    .sidebar ul { list-style: none; }
+    .sidebar ul li { margin: 15px 0; }
+    .sidebar ul li a {
+      color: #ecf0f1;
+      text-decoration: none;
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    .sidebar ul li a:hover { background: #34495e; }
+
+    /* Main */
+    .main { flex: 1; padding: 20px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .topbar h1 { font-size: 24px; color: #2c3e50; }
+    .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #219150; }
+
+    /* Login */
+    .login-container { display: flex; align-items: center; justify-content: center; width: 100%; }
+    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); width: 300px; }
+    .login-box h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+  </style>
+</head>
+<body>
+  <!-- LOGIN (vista inicial) -->
+  <div class="login-container" id="loginScreen">
+    <div class="login-box">
+      <h2>Login Admin</h2>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@club.com">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="adminPass" placeholder="********">
+      </div>
+      <button class="btn" onclick="login()">Ingresar</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (oculto hasta login) -->
+  <div style="display:none; width:100%" id="dashboard">
+    <div class="sidebar">
+      <h2>Mi Club</h2>
+      <ul>
+        <li><a href="#" onclick="showSection('club')">⚙️ Club</a></li>
+        <li><a href="#" onclick="showSection('divisiones')">🏉 Divisiones</a></li>
+        <li><a href="#" onclick="showSection('eventos')">📅 Partidos/Eventos</a></li>
+        <li><a href="#" onclick="showSection('compromisos')">💰 Compromisos</a></li>
+        <li><a href="#" onclick="showSection('jugadores')">👥 Jugadores</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h1>Panel Admin</h1>
+        <button class="btn" onclick="logout()">Salir</button>
+      </div>
+
+      <!-- SECCION CLUB -->
+      <div class="card" id="section-club">
+        <h3>Configuración del Club</h3>
+        <div class="form-group">
+          <label>Nombre del Club</label>
+          <input type="text" placeholder="Veteranos Rugby Club">
+        </div>
+        <div class="form-group">
+          <label>Foto de portada</label>
+          <input type="file">
+        </div>
+        <div class="form-group">
+          <label>Quiénes somos</label>
+          <textarea rows="4" placeholder="Texto de presentación..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp Manager</label>
+          <input type="text" placeholder="https://wa.me/549..."></input>
+        </div>
+        <div class="form-group">
+          <label>Instagram (URL o usuario)</label>
+          <input type="text" placeholder="https://instagram.com/mi_club">
+        </div>
+        <button class="btn">Guardar</button>
+      </div>
+
+      <!-- Placeholder otras secciones -->
+      <div class="card" id="section-divisiones" style="display:none">
+        <h3>Divisiones</h3>
+        <p>Aquí se podrán crear/editar divisiones (M35, M40, etc.).</p>
+      </div>
+
+      <div class="card" id="section-eventos" style="display:none">
+        <h3>Partidos y Eventos</h3>
+        <p>Aquí se podrán gestionar los partidos y agenda del año.</p>
+      </div>
+
+      <div class="card" id="section-compromisos" style="display:none">
+        <h3>Compromisos de Pago</h3>
+        <p>Aquí se podrán crear cuotas, rifas, eventos pagos, etc.</p>
+      </div>
+
+      <div class="card" id="section-jugadores" style="display:none">
+        <h3>Jugadores</h3>
+        <p>Aquí se mostrarán los jugadores registrados.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function login(){
+      const email = document.getElementById('adminEmail').value;
+      const pass = document.getElementById('adminPass').value;
+      if(email && pass){
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'flex';
+      } else {
+        alert('Ingrese usuario y contraseña');
+      }
+    }
+    function logout(){
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    }
+    function showSection(sec){
+      const sections = ['club','divisiones','eventos','compromisos','jugadores'];
+      sections.forEach(s=>{
+        document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
+      });
+    }
+  </script>
+</body>
+</html>
