@@ -187,6 +187,37 @@ async function crearEvento(){
     alert('Error de conexión. Intente nuevamente.');
   });
 }
+
+ async function listarEventos() {
+  try {
+    const response = await fetch('/.netlify/functions/listarEventos', { method: 'GET' });
+    const eventos = await response.json();
+
+    const tbody = document.querySelector('#eventTable tbody');
+    tbody.innerHTML = '';
+
+    eventos.forEach(ev => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${ev.titulo}</td>
+        <td>${ev.tipo}</td>
+        <td>${new Date(ev.fecha).toLocaleString()}</td>
+        <td>${ev.direccion} ${ev.numero}, ${ev.ciudad}, ${ev.provincia}, ${ev.pais}</td>
+        <td>${ev.ParticipantesConfirmados || ''}</td>
+        <td>${ev.PagosGenerados || ''}</td>
+        <td>${ev.imagen ? `<img src="${ev.imagen}" style="width:100px; height:auto;" />` : ''}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('Error al listar eventos:', err);
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', listarEventos);
+
 </script>
 
 </body>
