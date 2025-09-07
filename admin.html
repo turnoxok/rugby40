@@ -107,12 +107,6 @@
         <button class="btn">Guardar</button>
       </div>
 
-      <!-- SECCION DIVISIONES -->
-      <div class="card" id="section-divisiones" style="display:none">
-        <h3>Divisiones</h3>
-        <p>Aquí se podrán crear/editar divisiones (M35, M40, etc.).</p>
-      </div>
-
       <!-- SECCION EVENTOS -->
       <div class="card" id="section-eventos" style="display:none">
         <h3>Partidos y Eventos</h3>
@@ -120,29 +114,67 @@
           <label>Título del Evento</label>
           <input type="text" placeholder="Encuentro vs Club XYZ">
         </div>
+
         <div class="form-group">
-          <label>División</label>
-          <select>
-            <option>M35</option>
-            <option>M40</option>
-            <option>M50</option>
+          <label>Tipo de Evento</label>
+          <select id="eventType" onchange="toggleEventType()">
+            <option value="propio">Propio (organizado por el club)</option>
+            <option value="tercero">Tercero (organizado por otro club)</option>
           </select>
         </div>
+
+        <div class="form-group" id="clubOrganizerGroup" style="display:none">
+          <label>Club Organizador</label>
+          <input type="text" placeholder="Nombre del club externo">
+        </div>
+
+        <div class="form-group" id="inviteClubsGroup">
+          <label>Enviar invitación a clubes</label>
+          <input type="checkbox" id="inviteAll"> Todos los clubes registrados
+          <select multiple id="selectClubs" style="margin-top:5px;">
+            <option>Club A</option>
+            <option>Club B</option>
+            <option>Club C</option>
+          </select>
+        </div>
+
+        <h4>Ubicación del Evento</h4>
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" placeholder="Calle Principal">
+        </div>
+        <div class="form-group">
+          <label>Número</label>
+          <input type="text" placeholder="123">
+        </div>
+        <div class="form-group">
+          <label>Ciudad</label>
+          <input type="text" placeholder="Ciudad">
+        </div>
+        <div class="form-group">
+          <label>Provincia</label>
+          <select>
+            <option>Provincia 1</option>
+            <option>Provincia 2</option>
+            <option>Provincia 3</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>País</label>
+          <select>
+            <option>Argentina</option>
+            <option>Brasil</option>
+            <option>Uruguay</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label>Fecha y Hora</label>
           <input type="datetime-local">
         </div>
         <div class="form-group">
-          <label>Lugar</label>
-          <input type="text" placeholder="Cancha Central">
-        </div>
-        <div class="form-group">
           <label>Costo Total</label>
           <input type="number" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label>Marcar como Próximo Partido</label>
-          <input type="checkbox">
         </div>
         <button class="btn" onclick="addEvent()">Crear Evento</button>
 
@@ -150,10 +182,10 @@
           <thead>
             <tr>
               <th>Título</th>
+              <th>Tipo</th>
               <th>División</th>
               <th>Fecha</th>
               <th>Lugar</th>
-              <th>Costo</th>
               <th>Próximo</th>
             </tr>
           </thead>
@@ -201,13 +233,21 @@
       });
     }
 
+    function toggleEventType(){
+      const type = document.getElementById('eventType').value;
+      document.getElementById('clubOrganizerGroup').style.display = (type==='tercero')?'block':'none';
+      document.getElementById('inviteClubsGroup').style.display = (type==='propio')?'block':'none';
+    }
+
     function addEvent(){
       const title = document.querySelector('#section-eventos input[type=text]').value;
-      const division = document.querySelector('#section-eventos select').value;
+      const type = document.getElementById('eventType').value;
+      const division = document.querySelector('#section-eventos select:nth-of-type(2)').value;
       const date = document.querySelector('#section-eventos input[type=datetime-local]').value;
-      const place = document.querySelectorAll('#section-eventos input[type=text]')[1].value;
+      const place = document.querySelector('#section-eventos input[type=text]:nth-of-type(2)').value;
       const cost = document.querySelector('#section-eventos input[type=number]').value;
-      const next = document.querySelector('#section-eventos input[type=checkbox]').checked ? 'Sí' : 'No';
+
+      const next = 'Sí'; // para MVP siempre sí
 
       if(!title || !date || !place || !cost){
         alert('Complete todos los campos');
@@ -217,18 +257,17 @@
       const table = document.getElementById('eventTable').getElementsByTagName('tbody')[0];
       const row = table.insertRow();
       row.insertCell(0).innerText = title;
-      row.insertCell(1).innerText = division;
-      row.insertCell(2).innerText = date;
-      row.insertCell(3).innerText = place;
-      row.insertCell(4).innerText = cost;
+      row.insertCell(1).innerText = type;
+      row.insertCell(2).innerText = division;
+      row.insertCell(3).innerText = date;
+      row.insertCell(4).innerText = place;
       row.insertCell(5).innerText = next;
 
       // limpiar formulario
       document.querySelector('#section-eventos input[type=text]').value = '';
       document.querySelector('#section-eventos input[type=datetime-local]').value = '';
-      document.querySelectorAll('#section-eventos input[type=text]')[1].value = '';
+      document.querySelector('#section-eventos input[type=text]:nth-of-type(2)').value = '';
       document.querySelector('#section-eventos input[type=number]').value = '';
-      document.querySelector('#section-eventos input[type=checkbox]').checked = false;
     }
   </script>
 </body>
