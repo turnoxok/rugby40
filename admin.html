@@ -31,13 +31,9 @@
     .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
     .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
     .btn:hover { background: #219150; }
-
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #ecf0f1; }
 
     /* Login */
     .login-container { display: flex; align-items: center; justify-content: center; width: 100%; }
@@ -46,7 +42,7 @@
   </style>
 </head>
 <body>
-  <!-- LOGIN (vista inicial) -->
+  <!-- LOGIN -->
   <div class="login-container" id="loginScreen">
     <div class="login-box">
       <h2>Login Admin</h2>
@@ -62,23 +58,20 @@
     </div>
   </div>
 
-  <!-- DASHBOARD (oculto hasta login) -->
+  <!-- DASHBOARD -->
   <div style="display:none; width:100%" id="dashboard">
     <div class="sidebar">
       <h2>Mi Club</h2>
       <ul>
         <li><a href="#" onclick="showSection('club')">⚙️ Club</a></li>
         <li><a href="#" onclick="showSection('divisiones')">🏉 Divisiones</a></li>
-        <li><a href="#" onclick="showSection('eventos')">📅 Partidos/Eventos</a></li>
-        <li><a href="#" onclick="showSection('compromisos')">💰 Compromisos</a></li>
-        <li><a href="#" onclick="showSection('jugadores')">👥 Jugadores</a></li>
+        <li><a href="#" onclick="logout()">Salir</a></li>
       </ul>
     </div>
 
     <div class="main">
       <div class="topbar">
         <h1>Panel Admin</h1>
-        <button class="btn" onclick="logout()">Salir</button>
       </div>
 
       <!-- SECCION CLUB -->
@@ -107,104 +100,10 @@
         <button class="btn">Guardar</button>
       </div>
 
-      <!-- SECCION EVENTOS -->
-      <div class="card" id="section-eventos" style="display:none">
-        <h3>Partidos y Eventos</h3>
-        <div class="form-group">
-          <label>Título del Evento</label>
-          <input type="text" placeholder="Encuentro vs Club XYZ">
-        </div>
-
-        <div class="form-group">
-          <label>Tipo de Evento</label>
-          <select id="eventType" onchange="toggleEventType()">
-            <option value="propio">Propio (organizado por el club)</option>
-            <option value="tercero">Tercero (organizado por otro club)</option>
-          </select>
-        </div>
-
-        <div class="form-group" id="clubOrganizerGroup" style="display:none">
-          <label>Club Organizador</label>
-          <input type="text" placeholder="Nombre del club externo">
-        </div>
-
-        <div class="form-group" id="inviteClubsGroup">
-          <label>Enviar invitación a clubes</label>
-          <input type="checkbox" id="inviteAll"> Todos los clubes registrados
-          <select multiple id="selectClubs" style="margin-top:5px;">
-            <option>Club A</option>
-            <option>Club B</option>
-            <option>Club C</option>
-          </select>
-        </div>
-
-        <h4>Ubicación del Evento</h4>
-        <div class="form-group">
-          <label>Dirección</label>
-          <input type="text" placeholder="Calle Principal">
-        </div>
-        <div class="form-group">
-          <label>Número</label>
-          <input type="text" placeholder="123">
-        </div>
-        <div class="form-group">
-          <label>Ciudad</label>
-          <input type="text" placeholder="Ciudad">
-        </div>
-        <div class="form-group">
-          <label>Provincia</label>
-          <select>
-            <option>Provincia 1</option>
-            <option>Provincia 2</option>
-            <option>Provincia 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>País</label>
-          <select>
-            <option>Argentina</option>
-            <option>Brasil</option>
-            <option>Uruguay</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Fecha y Hora</label>
-          <input type="datetime-local">
-        </div>
-        <div class="form-group">
-          <label>Costo Total</label>
-          <input type="number" placeholder="0">
-        </div>
-        <button class="btn" onclick="addEvent()">Crear Evento</button>
-
-        <table id="eventTable">
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Tipo</th>
-              <th>División</th>
-              <th>Fecha</th>
-              <th>Lugar</th>
-              <th>Próximo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- eventos aparecerán aquí -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- SECCION COMPROMISOS -->
-      <div class="card" id="section-compromisos" style="display:none">
-        <h3>Compromisos de Pago</h3>
-        <p>Aquí se podrán crear cuotas, rifas, eventos pagos, etc.</p>
-      </div>
-
-      <!-- SECCION JUGADORES -->
-      <div class="card" id="section-jugadores" style="display:none">
-        <h3>Jugadores</h3>
-        <p>Aquí se mostrarán los jugadores registrados.</p>
+      <!-- SECCION DIVISIONES -->
+      <div class="card" id="section-divisiones" style="display:none">
+        <h3>Divisiones</h3>
+        <p>Aquí se podrán crear/editar divisiones (M35, M40, etc.).</p>
       </div>
     </div>
   </div>
@@ -227,47 +126,11 @@
     }
 
     function showSection(sec){
-      const sections = ['club','divisiones','eventos','compromisos','jugadores'];
+      const sections = ['club','divisiones'];
       sections.forEach(s=>{
-        document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
+        const el = document.getElementById('section-'+s);
+        if(el) el.style.display = (s===sec)?'block':'none';
       });
-    }
-
-    function toggleEventType(){
-      const type = document.getElementById('eventType').value;
-      document.getElementById('clubOrganizerGroup').style.display = (type==='tercero')?'block':'none';
-      document.getElementById('inviteClubsGroup').style.display = (type==='propio')?'block':'none';
-    }
-
-    function addEvent(){
-      const title = document.querySelector('#section-eventos input[type=text]').value;
-      const type = document.getElementById('eventType').value;
-      const division = document.querySelector('#section-eventos select:nth-of-type(2)').value;
-      const date = document.querySelector('#section-eventos input[type=datetime-local]').value;
-      const place = document.querySelector('#section-eventos input[type=text]:nth-of-type(2)').value;
-      const cost = document.querySelector('#section-eventos input[type=number]').value;
-
-      const next = 'Sí'; // para MVP siempre sí
-
-      if(!title || !date || !place || !cost){
-        alert('Complete todos los campos');
-        return;
-      }
-
-      const table = document.getElementById('eventTable').getElementsByTagName('tbody')[0];
-      const row = table.insertRow();
-      row.insertCell(0).innerText = title;
-      row.insertCell(1).innerText = type;
-      row.insertCell(2).innerText = division;
-      row.insertCell(3).innerText = date;
-      row.insertCell(4).innerText = place;
-      row.insertCell(5).innerText = next;
-
-      // limpiar formulario
-      document.querySelector('#section-eventos input[type=text]').value = '';
-      document.querySelector('#section-eventos input[type=datetime-local]').value = '';
-      document.querySelector('#section-eventos input[type=text]:nth-of-type(2)').value = '';
-      document.querySelector('#section-eventos input[type=number]').value = '';
     }
   </script>
 </body>
