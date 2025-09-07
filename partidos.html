@@ -1,33 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partidos/Eventos - Rugby Veteranos</title>
-  <link rel="icon" type="image/x-icon" href="./favicon.ico">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { display: flex; min-height: 100vh; background: #f5f6fa; }
-    .sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
-    .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
-    .sidebar ul { list-style: none; }
-    .sidebar ul li { margin: 15px 0; }
-    .sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px; }
-    .sidebar ul li a:hover { background: #34495e; }
-    .main { flex: 1; padding: 20px; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .topbar h1 { font-size: 24px; color: #2c3e50; }
-    .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-    .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
-    .btn:hover { background: #219150; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #ecf0f1; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partidos/Eventos - Rugby Veteranos</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body { display: flex; min-height: 100vh; background: #f5f6fa; }
+  .sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
+  .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
+  .sidebar ul { list-style: none; }
+  .sidebar ul li { margin: 15px 0; }
+  .sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px; }
+  .sidebar ul li a:hover { background: #34495e; }
+  .main { flex: 1; padding: 20px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .topbar h1 { font-size: 24px; color: #2c3e50; }
+  .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+  .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+  .btn:hover { background: #219150; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background: #ecf0f1; }
+  img.event-img { max-width: 120px; max-height: 80px; border-radius: 4px; }
+</style>
 </head>
 <body>
 
@@ -88,6 +89,11 @@
     <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
     <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div>
 
+    <div class="form-group">
+      <label>Imagen del Evento</label>
+      <input type="file" id="eventoImagen" accept="image/*">
+    </div>
+
     <button class="btn" onclick="crearEvento()">Crear Evento</button>
   </div>
 
@@ -97,6 +103,7 @@
     <table id="eventTable">
       <thead>
         <tr>
+          <th>Imagen</th>
           <th>Título</th>
           <th>Tipo</th>
           <th>Fecha</th>
@@ -111,51 +118,76 @@
 </div>
 
 <script>
-  function toggleEventType(){
-    const type = document.getElementById('eventType').value;
-    document.getElementById('clubOrganizerGroup').style.display = (type==='tercero')?'block':'none';
-    document.getElementById('inviteClubsGroup').style.display = (type==='propio')?'block':'none';
+function toggleEventType(){
+  const type = document.getElementById('eventType').value;
+  document.getElementById('clubOrganizerGroup').style.display = (type==='tercero')?'block':'none';
+  document.getElementById('inviteClubsGroup').style.display = (type==='propio')?'block':'none';
+}
+
+function showSection(sec){
+  ['crear','lista'].forEach(s => {
+    document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
+  });
+}
+
+function logout(){ window.location.href = 'admin.html'; }
+
+async function crearEvento(){
+  const fileInput = document.getElementById('eventoImagen');
+  let imageUrl = '';
+
+  if(fileInput.files.length > 0){
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('key', 'TU_API_KEY_IMGBB'); // <--- PONER TU API KEY DE IMGBB
+
+    try{
+      const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
+      const data = await res.json();
+      imageUrl = data.data.url;
+      console.log('Imagen subida a imgbb:', imageUrl);
+    } catch(err){
+      console.error('Error subiendo imagen a imgbb:', err);
+      alert('No se pudo subir la imagen. Intenta nuevamente.');
+      return;
+    }
   }
 
-  function showSection(sec){
-    ['crear','lista'].forEach(s => {
-      document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
-    });
-  }
+  const datos = {
+    action: 'crearEvento',
+    titulo: document.getElementById('titulo').value,
+    fecha: document.getElementById('fecha').value,
+    direccion: document.getElementById('direccion').value,
+    numero: document.getElementById('numero').value,
+    ciudad: document.getElementById('ciudad').value,
+    provincia: document.getElementById('provincia').value,
+    pais: document.getElementById('pais').value,
+    tipo: document.getElementById('eventType').value,
+    clubOrganizador: document.getElementById('clubOrganizador').value,
+    invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
+    imagen: imageUrl
+  };
 
-  function logout(){ window.location.href = 'admin.html'; }
+  console.log('Datos a enviar a Netlify Function:', datos);
 
-  function crearEvento(){
-    const datos = {
-      action: 'crearEvento',
-      titulo: document.getElementById('titulo').value,
-      fecha: document.getElementById('fecha').value,
-      direccion: document.getElementById('direccion').value,
-      numero: document.getElementById('numero').value,
-      ciudad: document.getElementById('ciudad').value,
-      provincia: document.getElementById('provincia').value,
-      pais: document.getElementById('pais').value,
-      tipo: document.getElementById('eventType').value,
-      clubOrganizador: document.getElementById('clubOrganizador').value,
-      invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(',')
-    };
-console.log('Datos a enviar:', datos); // <-- log de los datos que vamos a enviar
-    // Llamada al Netlify Function para evitar CORS
-    fetch('/.netlify/functions/crearEvento', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(datos)
-    })
-    .then(res => res.json())
-    .then(res => {
-      if(res.status==='ok') alert('Evento creado exitosamente');
-      else alert('Error al crear evento');
-    })
-    .catch(err => {
-      console.error('Error en fetch:', err);
-      alert('Error de conexión. Intente nuevamente.');
-    });
-  }
+  fetch('/.netlify/functions/crearEvento', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(datos)
+  })
+  .then(res => res.json())
+  .then(res => {
+    console.log('Respuesta final de la función:', res);
+    if(res.status==='ok') alert('Evento creado exitosamente');
+    else alert('Error al crear evento: ' + JSON.stringify(res));
+  })
+  .catch(err => {
+    console.error('Error en fetch:', err);
+    alert('Error de conexión. Intente nuevamente.');
+  });
+}
 </script>
+
 </body>
 </html>
