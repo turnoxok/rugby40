@@ -1,5 +1,5 @@
 {
-  "name": "rugby40-functions",
+  "name": "rugby40",
   "version": "1.0.0",
   "dependencies": {
     "node-fetch": "^2.6.7"
