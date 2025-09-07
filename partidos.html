@@ -140,7 +140,7 @@ async function crearEvento(){
     const file = fileInput.files[0];
     const formData = new FormData();
     formData.append('image', file);
-    formData.append('key', 'TU_API_KEY_IMGBB'); // <--- PONER TU API KEY DE IMGBB
+    formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // <--- PONER TU API KEY DE IMGBB
 
     try{
       const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
