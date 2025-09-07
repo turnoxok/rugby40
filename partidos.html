@@ -155,19 +155,22 @@ async function crearEvento(){
   }
 
   const datos = {
-    action: 'crearEvento',
-    titulo: document.getElementById('titulo').value,
-    fecha: document.getElementById('fecha').value,
-    direccion: document.getElementById('direccion').value,
-    numero: document.getElementById('numero').value,
-    ciudad: document.getElementById('ciudad').value,
-    provincia: document.getElementById('provincia').value,
-    pais: document.getElementById('pais').value,
-    tipo: document.getElementById('eventType').value,
-    clubOrganizador: document.getElementById('clubOrganizador').value,
-    invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
-    imagen: imageUrl
-  };
+  action: 'crearEvento',
+  titulo: document.getElementById('titulo').value,
+  fecha: document.getElementById('fecha').value,
+  direccion: document.getElementById('direccion').value,
+  numero: document.getElementById('numero').value,
+  ciudad: document.getElementById('ciudad').value,
+  provincia: document.getElementById('provincia').value,
+  pais: document.getElementById('pais').value,
+  tipo: document.getElementById('eventType').value,
+  clubOrganizador: document.getElementById('clubOrganizador').value,
+  invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
+  imagen: imageUrl,
+  costoTotal: document.getElementById('costoTotal').value,
+  fechaVencimiento: document.getElementById('fechaVencimiento') ? document.getElementById('fechaVencimiento').value : ''
+};
+
 
   console.log('Datos a enviar a Netlify Function:', datos);
 
@@ -200,13 +203,13 @@ async function crearEvento(){
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
-        <td>${ev.titulo}</td>
-        <td>${ev.tipo}</td>
-        <td>${new Date(ev.fecha).toLocaleString()}</td>
-        <td>${ev.direccion} ${ev.numero}, ${ev.ciudad}, ${ev.provincia}, ${ev.pais}</td>
+        <td>${ev.imagen ? `<img src="${ev.imagen}" class="event-img" />` : ''}</td>
+        <td>${ev.titulo || ''}</td>
+        <td>${ev.tipo || ''}</td>
+        <td>${ev.fecha ? new Date(ev.fecha).toLocaleString() : ''}</td>
+        <td>${ev.direccion || ''} ${ev.numero || ''}, ${ev.ciudad || ''}, ${ev.provincia || ''}, ${ev.pais || ''}</td>
         <td>${ev.ParticipantesConfirmados || ''}</td>
         <td>${ev.PagosGenerados || ''}</td>
-        <td>${ev.imagen ? `<img src="${ev.imagen}" style="width:100px; height:auto;" />` : ''}</td>
       `;
       tbody.appendChild(tr);
     });
