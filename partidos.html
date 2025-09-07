@@ -3,21 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <title>Partidos/Eventos - Rugby Veteranos</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { display: flex; min-height: 100vh; background: #f5f6fa; }
-
     .sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
     .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
     .sidebar ul { list-style: none; }
     .sidebar ul li { margin: 15px 0; }
-    .sidebar ul li a {
-      color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px;
-    }
+    .sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px; }
     .sidebar ul li a:hover { background: #34495e; }
-
     .main { flex: 1; padding: 20px; }
     .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .topbar h1 { font-size: 24px; color: #2c3e50; }
@@ -28,95 +24,93 @@
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
     .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
     .btn:hover { background: #219150; }
-
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #ecf0f1; }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Mi Club</h2>
-    <ul>
-      <li><a href="admin.html">🏠 Dashboard</a></li>
-      <li><a href="#" onclick="showSection('crear')">➕ Crear Evento</a></li>
-      <li><a href="#" onclick="showSection('lista')">📋 Lista de Eventos</a></li>
-      <li><a href="#" onclick="logout()">Salir</a></li>
-    </ul>
+
+<div class="sidebar">
+  <h2>Mi Club</h2>
+  <ul>
+    <li><a href="admin.html">🏠 Dashboard</a></li>
+    <li><a href="#" onclick="showSection('crear')">➕ Crear Evento</a></li>
+    <li><a href="#" onclick="showSection('lista')">📋 Lista de Eventos</a></li>
+    <li><a href="#" onclick="logout()">Salir</a></li>
+  </ul>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1>Partidos/Eventos</h1>
   </div>
 
-  <div class="main">
-    <div class="topbar">
-      <h1>Partidos/Eventos</h1>
+  <!-- CREAR EVENTO -->
+  <div class="card" id="section-crear">
+    <h3>Crear Evento</h3>
+
+    <div class="form-group">
+      <label>Título del Evento</label>
+      <input type="text" id="titulo" placeholder="Encuentro vs Club XYZ">
     </div>
 
-    <!-- CREAR EVENTO -->
-    <div class="card" id="section-crear">
-      <h3>Crear Evento</h3>
-
-      <div class="form-group">
-        <label>Título del Evento</label>
-        <input type="text" id="titulo" placeholder="Encuentro vs Club XYZ">
-      </div>
-
-      <div class="form-group">
-        <label>Tipo de Evento</label>
-        <select id="eventType" onchange="toggleEventType()">
-          <option value="propio">Propio</option>
-          <option value="tercero">Tercero</option>
-        </select>
-      </div>
-
-      <div class="form-group" id="clubOrganizerGroup" style="display:none">
-        <label>Club Organizador</label>
-        <input type="text" id="clubOrganizador" placeholder="Nombre del club externo">
-      </div>
-
-      <div class="form-group" id="inviteClubsGroup">
-        <label>Enviar invitación a clubes</label>
-        <input type="checkbox" id="inviteAll"> Todos los clubes registrados
-        <select multiple id="selectClubs" style="margin-top:5px;">
-          <option>Club A</option>
-          <option>Club B</option>
-          <option>Club C</option>
-        </select>
-      </div>
-
-      <h4>Ubicación del Evento</h4>
-      <div class="form-group"><label>Dirección</label><input type="text" id="direccion"></div>
-      <div class="form-group"><label>Número</label><input type="text" id="numero"></div>
-      <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"></div>
-      <div class="form-group"><label>Provincia</label><select id="provincia"><option>Provincia 1</option><option>Provincia 2</option><option>Provincia 3</option></select></div>
-      <div class="form-group"><label>País</label><select id="pais"><option>Argentina</option><option>Brasil</option><option>Uruguay</option></select></div>
-
-      <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
-      <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div>
-
-      <button class="btn" onclick="crearEvento()">Crear Evento</button>
+    <div class="form-group">
+      <label>Tipo de Evento</label>
+      <select id="eventType" onchange="toggleEventType()">
+        <option value="propio">Propio</option>
+        <option value="tercero">Tercero</option>
+      </select>
     </div>
 
-    <!-- LISTA DE EVENTOS -->
-    <div class="card" id="section-lista" style="display:none">
-      <h3>Lista de Eventos</h3>
-      <table id="eventTable">
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Tipo</th>
-            <th>Fecha</th>
-            <th>Lugar</th>
-            <th>Jugadores Confirmados</th>
-            <th>Pagos</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="form-group" id="clubOrganizerGroup" style="display:none">
+      <label>Club Organizador</label>
+      <input type="text" id="clubOrganizador" placeholder="Nombre del club externo">
     </div>
+
+    <div class="form-group" id="inviteClubsGroup">
+      <label>Enviar invitación a clubes</label>
+      <input type="checkbox" id="inviteAll"> Todos los clubes registrados
+      <select multiple id="selectClubs" style="margin-top:5px;">
+        <option>Club A</option>
+        <option>Club B</option>
+        <option>Club C</option>
+      </select>
+    </div>
+
+    <h4>Ubicación del Evento</h4>
+    <div class="form-group"><label>Dirección</label><input type="text" id="direccion"></div>
+    <div class="form-group"><label>Número</label><input type="text" id="numero"></div>
+    <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"></div>
+    <div class="form-group"><label>Provincia</label><select id="provincia"><option>Provincia 1</option><option>Provincia 2</option><option>Provincia 3</option></select></div>
+    <div class="form-group"><label>País</label><select id="pais"><option>Argentina</option><option>Brasil</option><option>Uruguay</option></select></div>
+
+    <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
+    <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div>
+
+    <button class="btn" onclick="crearEvento()">Crear Evento</button>
   </div>
+
+  <!-- LISTA DE EVENTOS -->
+  <div class="card" id="section-lista" style="display:none">
+    <h3>Lista de Eventos</h3>
+    <table id="eventTable">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Tipo</th>
+          <th>Fecha</th>
+          <th>Lugar</th>
+          <th>Jugadores Confirmados</th>
+          <th>Pagos</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 
 <script>
-  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzfXo7YpTGli_JUvCuq8oFvBeMiQOqH_3n3YXIFh2UK__n04yyuHnbULm3foveoFOle/exec';
-
   function toggleEventType(){
     const type = document.getElementById('eventType').value;
     document.getElementById('clubOrganizerGroup').style.display = (type==='tercero')?'block':'none';
@@ -146,12 +140,21 @@
       invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(',')
     };
 
-    fetch(WEBAPP_URL, { method:'POST', body: JSON.stringify(datos) })
-      .then(res => res.json())
-      .then(res => {
-        if(res.status==='ok') alert('Evento creado exitosamente');
-        else alert('Error al crear evento');
-      });
+    // Llamada al Netlify Function para evitar CORS
+    fetch('/.netlify/functions/crearEvento', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(datos)
+    })
+    .then(res => res.json())
+    .then(res => {
+      if(res.status==='ok') alert('Evento creado exitosamente');
+      else alert('Error al crear evento');
+    })
+    .catch(err => {
+      console.error('Error en fetch:', err);
+      alert('Error de conexión. Intente nuevamente.');
+    });
   }
 </script>
 </body>
