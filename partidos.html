@@ -195,7 +195,9 @@ async function crearEvento(){
   try {
     const response = await fetch('/.netlify/functions/listarEventos', { method: 'GET' });
     const eventos = await response.json();
-
+   
+console.log('Eventos recibidos del backend:', eventos); // <-- log para debug
+   
     const tbody = document.querySelector('#eventTable tbody');
     tbody.innerHTML = '';
 
