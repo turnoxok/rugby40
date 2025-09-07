@@ -127,16 +127,19 @@
   </div>
 
   <script>
-    function login(){
-      const email = document.getElementById('adminEmail').value;
-      const pass = document.getElementById('adminPass').value;
-      if(email && pass){
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'flex';
-      } else {
-        alert('Ingrese usuario y contraseña');
-      }
-    }
+   function login(){
+  const email = document.getElementById('adminEmail').value;
+  const pass = document.getElementById('adminPass').value;
+
+  // ejemplo de credenciales
+  if(email === 'admin@club.com' && pass === '1234'){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'flex';
+  } else {
+    alert('Usuario o contraseña incorrectos');
+  }
+}
+
     function logout(){
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
