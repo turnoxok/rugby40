@@ -139,7 +139,7 @@
       clubOrganizador: document.getElementById('clubOrganizador').value,
       invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(',')
     };
-
+console.log('Datos a enviar:', datos); // <-- log de los datos que vamos a enviar
     // Llamada al Netlify Function para evitar CORS
     fetch('/.netlify/functions/crearEvento', {
       method: 'POST',
