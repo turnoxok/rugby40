@@ -6,7 +6,7 @@ exports.handler = async function(event, context) {
 
     const datos = JSON.parse(event.body);
 
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxSWJa6Kuigib2rFsR5w6rS3oCvoKilhqsX6YsLduwfSpckP2rZ9gmW5-2tVh-aDDXA/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwjY3K-lJKIBaK4Ue9jqcFKBWqPEUsJ_GcjidUGVuO5NtvOnY4W2mP1xJRxeWyOxQQA/exec';
 
     let data = { status: 'error', message: 'No se pudo conectar con Web App' };
 
