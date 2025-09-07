@@ -31,9 +31,13 @@
     .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
     .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
     .btn:hover { background: #219150; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #ecf0f1; }
 
     /* Login */
     .login-container { display: flex; align-items: center; justify-content: center; width: 100%; }
@@ -103,22 +107,69 @@
         <button class="btn">Guardar</button>
       </div>
 
-      <!-- Placeholder otras secciones -->
+      <!-- SECCION DIVISIONES -->
       <div class="card" id="section-divisiones" style="display:none">
         <h3>Divisiones</h3>
         <p>Aquí se podrán crear/editar divisiones (M35, M40, etc.).</p>
       </div>
 
+      <!-- SECCION EVENTOS -->
       <div class="card" id="section-eventos" style="display:none">
         <h3>Partidos y Eventos</h3>
-        <p>Aquí se podrán gestionar los partidos y agenda del año.</p>
+        <div class="form-group">
+          <label>Título del Evento</label>
+          <input type="text" placeholder="Encuentro vs Club XYZ">
+        </div>
+        <div class="form-group">
+          <label>División</label>
+          <select>
+            <option>M35</option>
+            <option>M40</option>
+            <option>M50</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fecha y Hora</label>
+          <input type="datetime-local">
+        </div>
+        <div class="form-group">
+          <label>Lugar</label>
+          <input type="text" placeholder="Cancha Central">
+        </div>
+        <div class="form-group">
+          <label>Costo Total</label>
+          <input type="number" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Marcar como Próximo Partido</label>
+          <input type="checkbox">
+        </div>
+        <button class="btn" onclick="addEvent()">Crear Evento</button>
+
+        <table id="eventTable">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>División</th>
+              <th>Fecha</th>
+              <th>Lugar</th>
+              <th>Costo</th>
+              <th>Próximo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- eventos aparecerán aquí -->
+          </tbody>
+        </table>
       </div>
 
+      <!-- SECCION COMPROMISOS -->
       <div class="card" id="section-compromisos" style="display:none">
         <h3>Compromisos de Pago</h3>
         <p>Aquí se podrán crear cuotas, rifas, eventos pagos, etc.</p>
       </div>
 
+      <!-- SECCION JUGADORES -->
       <div class="card" id="section-jugadores" style="display:none">
         <h3>Jugadores</h3>
         <p>Aquí se mostrarán los jugadores registrados.</p>
@@ -127,28 +178,57 @@
   </div>
 
   <script>
-   function login(){
-  const email = document.getElementById('adminEmail').value;
-  const pass = document.getElementById('adminPass').value;
-
-  // ejemplo de credenciales
-  if(email === 'admin@club.com' && pass === '1234'){
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'flex';
-  } else {
-    alert('Usuario o contraseña incorrectos');
-  }
-}
+    function login(){
+      const email = document.getElementById('adminEmail').value;
+      const pass = document.getElementById('adminPass').value;
+      if(email && pass){
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'flex';
+      } else {
+        alert('Ingrese usuario y contraseña');
+      }
+    }
 
     function logout(){
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
     }
+
     function showSection(sec){
       const sections = ['club','divisiones','eventos','compromisos','jugadores'];
       sections.forEach(s=>{
         document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
       });
+    }
+
+    function addEvent(){
+      const title = document.querySelector('#section-eventos input[type=text]').value;
+      const division = document.querySelector('#section-eventos select').value;
+      const date = document.querySelector('#section-eventos input[type=datetime-local]').value;
+      const place = document.querySelectorAll('#section-eventos input[type=text]')[1].value;
+      const cost = document.querySelector('#section-eventos input[type=number]').value;
+      const next = document.querySelector('#section-eventos input[type=checkbox]').checked ? 'Sí' : 'No';
+
+      if(!title || !date || !place || !cost){
+        alert('Complete todos los campos');
+        return;
+      }
+
+      const table = document.getElementById('eventTable').getElementsByTagName('tbody')[0];
+      const row = table.insertRow();
+      row.insertCell(0).innerText = title;
+      row.insertCell(1).innerText = division;
+      row.insertCell(2).innerText = date;
+      row.insertCell(3).innerText = place;
+      row.insertCell(4).innerText = cost;
+      row.insertCell(5).innerText = next;
+
+      // limpiar formulario
+      document.querySelector('#section-eventos input[type=text]').value = '';
+      document.querySelector('#section-eventos input[type=datetime-local]').value = '';
+      document.querySelectorAll('#section-eventos input[type=text]')[1].value = '';
+      document.querySelector('#section-eventos input[type=number]').value = '';
+      document.querySelector('#section-eventos input[type=checkbox]').checked = false;
     }
   </script>
 </body>
