@@ -195,9 +195,9 @@ async function crearEvento(){
   try {
     const response = await fetch('/.netlify/functions/listarEventos', { method: 'GET' });
     const eventos = await response.json();
-   
-console.log('Eventos recibidos del backend:', eventos); // <-- log para debug
-   
+
+    console.log('Eventos recibidos en front:', eventos); // <-- para ver qué llega
+
     const tbody = document.querySelector('#eventTable tbody');
     tbody.innerHTML = '';
 
@@ -206,10 +206,10 @@ console.log('Eventos recibidos del backend:', eventos); // <-- log para debug
 
       tr.innerHTML = `
         <td>${ev.imagen ? `<img src="${ev.imagen}" class="event-img" />` : ''}</td>
-        <td>${ev.titulo || ''}</td>
-        <td>${ev.tipo || ''}</td>
-        <td>${ev.fecha ? new Date(ev.fecha).toLocaleString() : ''}</td>
-        <td>${ev.direccion || ''} ${ev.numero || ''}, ${ev.ciudad || ''}, ${ev.provincia || ''}, ${ev.pais || ''}</td>
+        <td>${ev.Evento || ev.titulo || ''}</td>
+        <td>${ev.Tipo || ev.tipo || ''}</td>
+        <td>${ev.Fecha ? new Date(ev.Fecha).toLocaleString() : ''}</td>
+        <td>${[ev.Dirección, ev.Número, ev.Ciudad, ev.Provincia, ev.País].filter(x => x).join(', ')}</td>
         <td>${ev.ParticipantesConfirmados || ''}</td>
         <td>${ev.PagosGenerados || ''}</td>
       `;
