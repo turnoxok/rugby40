@@ -154,7 +154,7 @@ function login(){
   const pass = document.getElementById('adminPass').value;
   if(!username || !pass){ alert('Ingrese usuario y contraseña'); return; }
 
-  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+  fetch(API_URL, {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action:'loginClub', username, password:pass})
@@ -190,7 +190,7 @@ function registrarClub(){
   if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
   if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
 
-  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+  fetch('https://script.google.com/macros/s/AKfycbwVqtMWSzTgyYCTbZ-waV5MBpbS-n5Rww3c6By7HZckvMDE26NL2ooBkudwUrFE7to4/exec',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action:'registrarClub', username, email, password:pass})
@@ -202,7 +202,7 @@ function registrarClub(){
 
 // PERFIL
 function cargarPerfil(){
-  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+  fetch(API_URL, {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action:'obtenerPerfil', username:loggedUsername})
