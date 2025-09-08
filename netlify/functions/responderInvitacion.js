@@ -1,24 +1,22 @@
-// /netlify/functions/responderInvitacion.js
-export async function handler(event) {
+// responderInvitacion.js
+const fetch = require('node-fetch'); // solo si necesitas fetch en Node 18-19, de lo contrario Node 20+ tiene fetch nativo
+
+module.exports = async function (event, context) {
   try {
-    // Parseamos el body recibido desde el front
     const { idEvento, estado } = JSON.parse(event.body);
 
-    // URL de tu Apps Script web app
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIEIglUxRi9WHE3Dp-RJFSsiQDSKb25IMvh6rGxvvnGEvxGBeD-hsHd6u6cQ7B-Z4f/exec'; // 🔹 reemplaza TU_SCRIPT_ID
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIEIglUxRi9WHE3Dp-RJFSsiQDSKb25IMvh6rGxvvnGEvxGBeD-hsHd6u6cQ7B-Z4f/exec'; // reemplaza TU_SCRIPT_ID
 
-    // Enviamos el POST al Apps Script con el action correcto
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'responderInvitacion', // muy importante
+        action: 'responderInvitacion',
         idEvento,
         estado
       })
     });
 
-    // Para debug: si falla res.json(), podemos usar res.text() temporalmente
     let data;
     try {
       data = await res.json();
@@ -32,8 +30,11 @@ export async function handler(event) {
       statusCode: 200,
       body: JSON.stringify(data)
     };
-
   } catch (err) {
     console.error('Error en Netlify Function responderInvitacion:', err);
     return {
-      s
+      statusCode: 500,
+      body: JSON.stringify({ status: 'error', message: err.message })
+    };
+  }
+};
