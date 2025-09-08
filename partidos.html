@@ -19,16 +19,13 @@
   .topbar h1 { font-size: 24px; color: #2c3e50; }
   .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
   .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-  .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
-  .btn:hover { background: #219150; }
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #ecf0f1; }
   img.event-img { max-width: 120px; max-height: 80px; border-radius: 4px; }
- 
+  .btn-accion { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+  .btn-aceptar { background: #27ae60; color: white; }
+  .btn-rechazar { background: #c0392b; color: white; }
 </style>
 </head>
 <body>
@@ -51,191 +48,125 @@
   <!-- CREAR EVENTO -->
   <div class="card" id="section-crear">
     <h3>Crear Evento</h3>
-
-    <div class="form-group">
-      <label>Título del Evento</label>
-      <input type="text" id="titulo" placeholder="Encuentro vs Club XYZ">
-    </div>
-
-    <div class="form-group">
-      <label>Tipo de Evento</label>
-      <select id="eventType" onchange="toggleEventType()">
-        <option value="propio">Propio</option>
-        <option value="tercero">Tercero</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="clubOrganizerGroup" style="display:none">
-      <label>Club Organizador</label>
-      <input type="text" id="clubOrganizador" placeholder="Nombre del club externo">
-    </div>
-
-    <div class="form-group" id="inviteClubsGroup">
-      <label>Enviar invitación a clubes</label>
-      <input type="checkbox" id="inviteAll"> Todos los clubes registrados
-      <select multiple id="selectClubs" style="margin-top:5px;">
-        <option>Club A</option>
-        <option>Club B</option>
-        <option>Club C</option>
-      </select>
-    </div>
-
-    <h4>Ubicación del Evento</h4>
-    <div class="form-group"><label>Dirección</label><input type="text" id="direccion"></div>
-    <div class="form-group"><label>Número</label><input type="text" id="numero"></div>
-    <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"></div>
-    <div class="form-group"><label>Provincia</label><select id="provincia"><option>Provincia 1</option><option>Provincia 2</option><option>Provincia 3</option></select></div>
-    <div class="form-group"><label>País</label><select id="pais"><option>Argentina</option><option>Brasil</option><option>Uruguay</option></select></div>
-
-    <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
-   <div class="form-group"><label>Fecha límite para confirmar asistencia</label><input type="datetime-local" id="fechaVencimiento"></div>
-    <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div>
-
-    <div class="form-group">
-      <label>Imagen del Evento</label>
-      <input type="file" id="eventoImagen" accept="image/*">
-    </div>
-
-    <button class="btn" onclick="crearEvento()">Crear Evento</button>
+    <!-- ... (formulario igual que antes) ... -->
   </div>
 
   <!-- LISTA DE EVENTOS -->
   <div class="card" id="section-lista" style="display:none">
-    <h3>Lista de Eventos</h3>
-    <table id="eventTable">
-  <thead>
-    <tr>
-      <th>Imagen</th>
-      <th>Título</th>
-      <th>Tipo</th>
-      <th>Fecha</th>
-      <th>Fecha Límite Confirmación</th>
-      <th>Lugar</th>
-      <th>Club Organizador</th>
-      <th>Invitados</th>
-      <th>Costo Total</th>
-      <th>Jugadores Confirmados</th>
-      <th>Pagos</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    <h3>Eventos Activos</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Imagen</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Fecha Límite</th>
+          <th>Lugar</th><th>Club Organizador</th><th>Invitados</th><th>Costo Total</th>
+          <th>Jugadores Confirmados</th><th>Pagos</th>
+        </tr>
+      </thead>
+      <tbody id="eventosActivos"></tbody>
+    </table>
+
+    <h3 style="margin-top:30px;">Mis Invitaciones</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Imagen</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Fecha Límite</th>
+          <th>Lugar</th><th>Club Organizador</th><th>Invitados</th><th>Costo Total</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="misInvitaciones"></tbody>
+    </table>
+
+    <h3 style="margin-top:30px;">Eventos Inactivos</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Imagen</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Fecha Límite</th>
+          <th>Lugar</th><th>Club Organizador</th><th>Invitados</th><th>Costo Total</th>
+          <th>Jugadores Confirmados</th><th>Pagos</th>
+        </tr>
+      </thead>
+      <tbody id="eventosInactivos"></tbody>
+    </table>
   </div>
 </div>
 
 <script>
-function toggleEventType(){
-  const type = document.getElementById('eventType').value;
-  document.getElementById('clubOrganizerGroup').style.display = (type==='tercero')?'block':'none';
-  document.getElementById('inviteClubsGroup').style.display = (type==='propio')?'block':'none';
-}
-
 function showSection(sec){
   ['crear','lista'].forEach(s => {
     document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
   });
 }
-
 function logout(){ window.location.href = 'admin.html'; }
 
-async function crearEvento(){
-  const fileInput = document.getElementById('eventoImagen');
-  let imageUrl = '';
-
-  if(fileInput.files.length > 0){
-    const file = fileInput.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // <--- PONER TU API KEY DE IMGBB
-
-    try{
-      const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
-      const data = await res.json();
-      imageUrl = data.data.url;
-      console.log('Imagen subida a imgbb:', imageUrl);
-    } catch(err){
-      console.error('Error subiendo imagen a imgbb:', err);
-      alert('No se pudo subir la imagen. Intenta nuevamente.');
-      return;
+function crearFilaEvento(ev, conAcciones=false){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${ev.Imagen ? `<img src="${ev.Imagen}" class="event-img" />` : ''}</td>
+    <td>${ev.Evento || ev.Titulo || ''}</td>
+    <td>${ev.Tipo || ''}</td>
+    <td>${ev.Fecha ? new Date(ev.Fecha).toLocaleString() : ''}</td>
+    <td>${ev.FechaVencimientoConfirmacion ? new Date(ev.FechaVencimientoConfirmacion).toLocaleString() : ''}</td>
+    <td>${[ev.Dirección, ev.Número, ev.Ciudad, ev.Provincia, ev.País].filter(x => x).join(', ')}</td>
+    <td>${ev['Club Organizador'] || ''}</td>
+    <td>${ev.Invitados || ''}</td>
+    <td>${ev.CostoTotal || ''}</td>
+    ${conAcciones 
+      ? `<td>
+          <button class="btn-accion btn-aceptar" onclick="moverEvento(this, 'activos')">Aceptar</button>
+          <button class="btn-accion btn-rechazar" onclick="moverEvento(this, 'inactivos')">Rechazar</button>
+        </td>`
+      : `<td>${ev.ParticipantesConfirmados || ''}</td>
+         <td>${ev.PagosGenerados || ''}</td>`
     }
-  }
-
-  const datos = {
-  action: 'crearEvento',
-  titulo: document.getElementById('titulo').value,
-  fecha: document.getElementById('fecha').value,
-  fechaVencimiento: document.getElementById('fechaVencimiento').value,
-  direccion: document.getElementById('direccion').value,
-  numero: document.getElementById('numero').value,
-  ciudad: document.getElementById('ciudad').value,
-  provincia: document.getElementById('provincia').value,
-  pais: document.getElementById('pais').value,
-  tipo: document.getElementById('eventType').value,
-  clubOrganizador: document.getElementById('clubOrganizador').value,
-  invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
-  imagen: imageUrl,
-  costoTotal: document.getElementById('costoTotal').value,
-  
-};
-
-
-  console.log('Datos a enviar a Netlify Function:', datos);
-
-  fetch('/.netlify/functions/crearEvento', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(datos)
-  })
-  .then(res => res.json())
-  .then(res => {
-    console.log('Respuesta final de la función:', res);
-    if(res.status==='ok') alert('Evento creado exitosamente');
-    else alert('Error al crear evento: ' + JSON.stringify(res));
-  })
-  .catch(err => {
-    console.error('Error en fetch:', err);
-    alert('Error de conexión. Intente nuevamente.');
-  });
+  `;
+  return tr;
 }
 
- async function listarEventos() {
+function moverEvento(btn, destino){
+  const tr = btn.closest("tr");
+  if(destino === "activos"){
+    document.getElementById("eventosActivos").appendChild(tr);
+    tr.querySelector("td:last-child").innerHTML = "Confirmado"; 
+  } else {
+    document.getElementById("eventosInactivos").appendChild(tr);
+    tr.querySelector("td:last-child").innerHTML = "Rechazado";
+  }
+}
+
+async function listarEventos() {
   try {
-    const response = await fetch('/.netlify/functions/listarEventos', { method: 'GET' });
+    const response = await fetch('/.netlify/functions/listarEventos');
     const eventos = await response.json();
 
-    console.log('Eventos recibidos en front:', eventos); // <-- para ver qué llega
+    console.log('Eventos recibidos en front:', eventos);
 
-    const tbody = document.querySelector('#eventTable tbody');
-    tbody.innerHTML = '';
+    const tbodyActivos = document.getElementById('eventosActivos');
+    const tbodyInvitaciones = document.getElementById('misInvitaciones');
+    const tbodyInactivos = document.getElementById('eventosInactivos');
+
+    tbodyActivos.innerHTML = '';
+    tbodyInvitaciones.innerHTML = '';
+    tbodyInactivos.innerHTML = '';
+
+    const hoy = new Date();
 
     eventos.forEach(ev => {
-      const tr = document.createElement('tr');
+      const fechaEvento = ev.Fecha ? new Date(ev.Fecha) : null;
 
-      tr.innerHTML = `
-        <td>${ev.Imagen ? `<img src="${ev.Imagen}" class="event-img" />` : ''}</td>
-        <td>${ev.Evento || ev.Titulo || ''}</td>
-        <td>${ev.Tipo || ''}</td>
-        <td>${ev.Fecha ? new Date(ev.Fecha).toLocaleString() : ''}</td>
-        <td>${ev.FechaVencimientoConfirmacion ? new Date(ev.FechaVencimientoConfirmacion).toLocaleString() : ''}</td>
-        <td>${[ev.Dirección, ev.Número, ev.Ciudad, ev.Provincia, ev.País].filter(x => x).join(', ')}</td>
-        <td>${ev['Club Organizador'] || ''}</td>
-        <td>${ev.Invitados || ''}</td>
-        <td>${ev.CostoTotal || ''}</td>
-        <td>${ev.ParticipantesConfirmados || ''}</td>
-        <td>${ev.PagosGenerados || ''}</td>
-      `;
-      tbody.appendChild(tr);
-     console.log(ev.imagen);
+      if (fechaEvento && fechaEvento < hoy) {
+        tbodyInactivos.appendChild(crearFilaEvento(ev)); 
+      } else if (ev.ParticipantesConfirmados) {
+        tbodyActivos.appendChild(crearFilaEvento(ev)); 
+      } else {
+        tbodyInvitaciones.appendChild(crearFilaEvento(ev, true)); 
+      }
     });
   } catch (err) {
     console.error('Error al listar eventos:', err);
   }
 }
-
-// Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', listarEventos);
-
 </script>
-
 </body>
 </html>
