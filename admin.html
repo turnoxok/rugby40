@@ -1,137 +1,246 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/x-icon" href="./favicon.ico">
-  <title>Panel Admin - Rugby Veteranos</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { display: flex; min-height: 100vh; background: #f5f6fa; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panel Admin - Rugby Veteranos</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+body { display: flex; min-height: 100vh; background: #f5f6fa; }
 
-    /* Sidebar */
-    .sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
-    .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
-    .sidebar ul { list-style: none; }
-    .sidebar ul li { margin: 15px 0; }
-    .sidebar ul li a {
-      color: #ecf0f1;
-      text-decoration: none;
-      display: block;
-      padding: 8px 10px;
-      border-radius: 6px;
-    }
-    .sidebar ul li a:hover { background: #34495e; }
+/* Contenedores login/registro */
+.login-container, .register-container { display: flex; align-items: center; justify-content: center; width: 100%; }
+.login-box, .register-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); width: 320px; }
+.login-box h2, .register-box h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+.btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+.btn:hover { background: #219150; }
 
-    /* Main */
-    .main { flex: 1; padding: 20px; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .topbar h1 { font-size: 24px; color: #2c3e50; }
-    .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-    .btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
-    .btn:hover { background: #219150; }
-
-    /* Login */
-    .login-container { display: flex; align-items: center; justify-content: center; width: 100%; }
-    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); width: 300px; }
-    .login-box h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
-  </style>
+/* Sidebar y Main */
+.sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
+.sidebar h2 { margin-bottom: 30px; font-size: 20px; }
+.sidebar ul { list-style: none; }
+.sidebar ul li { margin: 15px 0; }
+.sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px; }
+.sidebar ul li a:hover { background: #34495e; }
+.main { flex: 1; padding: 20px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.topbar h1 { font-size: 24px; color: #2c3e50; }
+.card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
+</style>
 </head>
 <body>
-  <!-- LOGIN -->
-  <div class="login-container" id="loginScreen">
-    <div class="login-box">
-      <h2>Login Admin</h2>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="adminEmail" placeholder="admin@club.com">
-      </div>
-      <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" id="adminPass" placeholder="********">
-      </div>
-      <button class="btn" onclick="login()">Ingresar</button>
+
+<!-- REGISTER -->
+<div class="register-container" id="registerScreen">
+  <div class="register-box">
+    <h2>Registro Club</h2>
+    <div class="form-group">
+      <label>Usuario (username)</label>
+      <input type="text" id="regUsername" placeholder="MiClubRugby">
     </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="admin@club.com">
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="regPass" placeholder="********">
+    </div>
+    <div class="form-group">
+      <label>Repetir Contraseña</label>
+      <input type="password" id="regPass2" placeholder="********">
+    </div>
+    <button class="btn" onclick="registrarClub()">Registrar</button>
+    <p style="margin-top:10px;text-align:center;">
+      ¿Ya tenés cuenta? <a href="#" onclick="showLogin()">Ingresar</a>
+    </p>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="login-container" id="loginScreen" style="display:none;">
+  <div class="login-box">
+    <h2>Login Admin</h2>
+    <div class="form-group">
+      <label>Usuario</label>
+      <input type="text" id="adminUsername" placeholder="MiClubRugby">
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="adminPass" placeholder="********">
+    </div>
+    <button class="btn" onclick="login()">Ingresar</button>
+    <p style="margin-top:10px;text-align:center;">
+      ¿No tenés cuenta? <a href="#" onclick="showRegister()">Registrarse</a>
+    </p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div style="display:none; width:100%" id="dashboard">
+  <div class="sidebar">
+    <h2>Mi Club</h2>
+    <ul>
+      <li><a href="#" onclick="showSection('perfil')">⚙️ Perfil</a></li>
+      <li><a href="#" onclick="logout()">Salir</a></li>
+    </ul>
   </div>
 
-  <!-- DASHBOARD -->
-  <div style="display:none; width:100%" id="dashboard">
-    <div class="sidebar">
-      <h2>Mi Club</h2>
-      <ul>
-        <li><a href="#" onclick="showSection('club')">⚙️ Club</a></li>
-        <li><a href="#" onclick="showSection('divisiones')">🏉 Divisiones</a></li>
-        <li><a href="#" onclick="logout()">Salir</a></li>
-      </ul>
+  <div class="main">
+    <div class="topbar">
+      <h1>Panel Admin</h1>
     </div>
 
-    <div class="main">
-      <div class="topbar">
-        <h1>Panel Admin</h1>
+    <!-- PERFIL -->
+    <div class="card" id="section-perfil">
+      <h3>Perfil del Club</h3>
+      <div class="form-group">
+        <label>Usuario (username)</label>
+        <input type="text" id="perfilUsername">
       </div>
-
-      <!-- SECCION CLUB -->
-      <div class="card" id="section-club">
-        <h3>Configuración del Club</h3>
-        <div class="form-group">
-          <label>Nombre del Club</label>
-          <input type="text" placeholder="Veteranos Rugby Club">
-        </div>
-        <div class="form-group">
-          <label>Foto de portada</label>
-          <input type="file">
-        </div>
-        <div class="form-group">
-          <label>Quiénes somos</label>
-          <textarea rows="4" placeholder="Texto de presentación..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>WhatsApp Manager</label>
-          <input type="text" placeholder="https://wa.me/549..."></input>
-        </div>
-        <div class="form-group">
-          <label>Instagram (URL o usuario)</label>
-          <input type="text" placeholder="https://instagram.com/mi_club">
-        </div>
-        <button class="btn">Guardar</button>
+      <div class="form-group">
+        <label>Nombre del Club</label>
+        <input type="text" id="perfilNombre">
       </div>
-
-      <!-- SECCION DIVISIONES -->
-      <div class="card" id="section-divisiones" style="display:none">
-        <h3>Divisiones</h3>
-        <p>Aquí se podrán crear/editar divisiones (M35, M40, etc.).</p>
+      <div class="form-group">
+        <label>Dirección</label>
+        <input type="text" id="perfilDireccion">
       </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" id="perfilTelefono">
+      </div>
+      <div class="form-group">
+        <label>Quiénes somos</label>
+        <textarea id="perfilDescripcion" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="text" id="perfilWhatsapp">
+      </div>
+      <div class="form-group">
+        <label>Instagram</label>
+        <input type="text" id="perfilInstagram">
+      </div>
+      <div class="form-group">
+        <label>Portada (URL)</label>
+        <input type="text" id="perfilPortada">
+      </div>
+      <button class="btn" onclick="guardarPerfil()">Guardar Perfil</button>
     </div>
   </div>
+</div>
 
-  <script>
-    function login(){
-      const email = document.getElementById('adminEmail').value;
-      const pass = document.getElementById('adminPass').value;
-      if(email && pass){
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'flex';
-      } else {
-        alert('Ingrese usuario y contraseña');
-      }
-    }
+<script>
+let loggedUsername = null;
 
-    function logout(){
-      document.getElementById('dashboard').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'flex';
-    }
+function showRegister(){
+  document.getElementById('registerScreen').style.display='flex';
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dashboard').style.display='none';
+}
+function showLogin(){
+  document.getElementById('registerScreen').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+}
 
-    function showSection(sec){
-      const sections = ['club','divisiones'];
-      sections.forEach(s=>{
-        const el = document.getElementById('section-'+s);
-        if(el) el.style.display = (s===sec)?'block':'none';
-      });
-    }
-  </script>
+function login(){
+  const username = document.getElementById('adminUsername').value.trim();
+  const pass = document.getElementById('adminPass').value;
+  if(!username || !pass){ alert('Ingrese usuario y contraseña'); return; }
+
+  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({action:'loginClub', username, password:pass})
+  }).then(r=>r.json()).then(data=>{
+    if(data.status==='ok'){
+      loggedUsername = username;
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('dashboard').style.display='flex';
+      cargarPerfil();
+    } else { alert('Error: '+data.msg); }
+  });
+}
+
+function logout(){
+  loggedUsername=null;
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+function showSection(sec){
+  const sections = ['perfil'];
+  sections.forEach(s=>{
+    document.getElementById('section-'+s).style.display=(s===sec)?'block':'none';
+  });
+}
+
+// REGISTRO
+function registrarClub(){
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
+  if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
+
+  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({action:'registrarClub', username, email, password:pass})
+  }).then(r=>r.json()).then(data=>{
+    if(data.status==='ok'){alert('Cuenta creada! Ahora ingrese'); showLogin();}
+    else alert('Error: '+data.msg);
+  });
+}
+
+// PERFIL
+function cargarPerfil(){
+  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({action:'obtenerPerfil', username:loggedUsername})
+  }).then(r=>r.json()).then(data=>{
+    if(data.status==='ok'){
+      document.getElementById('perfilUsername').value=data.profile.username;
+      document.getElementById('perfilNombre').value=data.profile.nombre;
+      document.getElementById('perfilDireccion').value=data.profile.direccion;
+      document.getElementById('perfilTelefono').value=data.profile.telefono;
+      document.getElementById('perfilDescripcion').value=data.profile.descripcion;
+      document.getElementById('perfilWhatsapp').value=data.profile.whatsapp;
+      document.getElementById('perfilInstagram').value=data.profile.instagram;
+      document.getElementById('perfilPortada').value=data.profile.portada;
+    } else { alert('Error al cargar perfil'); }
+  });
+}
+
+function guardarPerfil(){
+  const profile = {
+    username: document.getElementById('perfilUsername').value.trim(),
+    nombre: document.getElementById('perfilNombre').value.trim(),
+    direccion: document.getElementById('perfilDireccion').value.trim(),
+    telefono: document.getElementById('perfilTelefono').value.trim(),
+    descripcion: document.getElementById('perfilDescripcion').value.trim(),
+    whatsapp: document.getElementById('perfilWhatsapp').value.trim(),
+    instagram: document.getElementById('perfilInstagram').value.trim(),
+    portada: document.getElementById('perfilPortada').value.trim()
+  };
+
+  fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({action:'actualizarPerfil', username:loggedUsername, profile})
+  }).then(r=>r.json()).then(data=>{
+    if(data.status==='ok'){ alert('Perfil guardado'); loggedUsername=profile.username;}
+    else alert('Error al guardar perfil: '+data.msg);
+  });
+}
+</script>
 </body>
 </html>
