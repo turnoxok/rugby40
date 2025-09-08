@@ -1,169 +1,135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Partidos/Eventos - Rugby Veteranos</title>
-<link rel="icon" type="image/x-icon" href="./favicon.ico">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-  body { display: flex; min-height: 100vh; background: #f5f6fa; }
-  .sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
-  .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
-  .sidebar ul { list-style: none; }
-  .sidebar ul li { margin: 15px 0; }
-  .sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px; }
-  .sidebar ul li a:hover { background: #34495e; }
-  .main { flex: 1; padding: 20px; }
-  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .topbar h1 { font-size: 24px; color: #2c3e50; }
-  .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-  .card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
-  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  th { background: #ecf0f1; }
-  img.event-img { max-width: 120px; max-height: 80px; border-radius: 4px; }
-  .btn-accion { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; }
-  .btn-aceptar { background: #27ae60; color: white; }
-  .btn-rechazar { background: #c0392b; color: white; }
-</style>
+  <meta charset="UTF-8">
+  <title>Partidos - Rugby Veteranos</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .btn-accion { padding: 4px 8px; margin: 2px; cursor: pointer; }
+    .event-img { width: 60px; height: 60px; object-fit: cover; }
+  </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <h2>Mi Club</h2>
-  <ul>
-    <li><a href="admin.html">🏠 Dashboard</a></li>
-    <li><a href="#" onclick="showSection('crear')">➕ Crear Evento</a></li>
-    <li><a href="#" onclick="showSection('lista')">📋 Lista de Eventos</a></li>
-    <li><a href="#" onclick="logout()">Salir</a></li>
-  </ul>
-</div>
+<h2>Crear Evento</h2>
+<form id="formCrearEvento">
+  <input type="text" id="titulo" placeholder="Título" required>
+  <input type="datetime-local" id="fecha" placeholder="Fecha" required>
+  <input type="datetime-local" id="fechaVencimiento" placeholder="Vencimiento Confirmación">
+  <input type="text" id="direccion" placeholder="Dirección">
+  <input type="text" id="numero" placeholder="Número">
+  <input type="text" id="ciudad" placeholder="Ciudad">
+  <input type="text" id="provincia" placeholder="Provincia">
+  <input type="text" id="pais" placeholder="País">
+  <input type="text" id="clubOrganizador" placeholder="Club Organizador">
+  <input type="file" id="eventoImagen" accept="image/*">
+  <input type="number" id="costoTotal" placeholder="Costo Total" step="0.01">
+  <label><input type="checkbox" id="inviteAll"> Invitar a todos</label>
+  <button type="button" id="crearEventoBtn">Crear Evento</button>
+</form>
 
-<div class="main">
-  <div class="topbar">
-    <h1>Partidos/Eventos</h1>
-  </div>
+<h2>Invitaciones</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Evento</th>
+      <th>Tipo</th>
+      <th>Fecha</th>
+      <th>Vencimiento Confirmación</th>
+      <th>Lugar</th>
+      <th>Club Organizador</th>
+      <th>Invitados</th>
+      <th>Costo Total</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody id="misInvitaciones"></tbody>
+</table>
 
-  
-  <!-- CREAR EVENTO --> <div class="card" id="section-crear"> 
-   <h3>Crear Evento</h3> 
-   <div class="form-group">
-    <label>Título del Evento</label> <input type="text" id="titulo" placeholder="Encuentro vs Club XYZ"> </div> 
-   <div class="form-group"> <label>Tipo de Evento</label> <select id="eventType" onchange="toggleEventType()"> <option value="propio">Propio</option> <option value="tercero">Tercero</option> </select> </div> 
-   <div class="form-group" id="clubOrganizerGroup" style="display:none"> <label>Club Organizador</label> <input type="text" id="clubOrganizador" placeholder="Nombre del club externo"> </div> 
-   <div class="form-group" id="inviteClubsGroup"> <label>Enviar invitación a clubes</label> <input type="checkbox" id="inviteAll"> Todos los clubes registrados <select multiple id="selectClubs" style="margin-top:5px;"> <option>Club A</option> <option>Club B</option> <option>Club C</option> </select> </div> 
-   <h4>Ubicación del Evento</h4> 
-   <div class="form-group"><label>Dirección</label><input type="text" id="direccion"></div> 
-   <div class="form-group"><label>Número</label><input type="text" id="numero"></div> 
-   <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"></div> 
-   <div class="form-group"><label>Provincia</label><select id="provincia"><option>Provincia 1</option><option>Provincia 2</option><option>Provincia 3</option></select></div> 
-   <div class="form-group"><label>País</label><select id="pais"><option>Argentina</option><option>Brasil</option><option>Uruguay</option></select></div> 
-   <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
-   <div class="form-group">
-  <label>Fecha límite para confirmar asistencia</label><input type="datetime-local" id="fechaVencimiento"></div>
-   <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div> 
-   <div class="form-group"> <label>Imagen del Evento</label> <input type="file" id="eventoImagen" accept="image/*"> </div> 
-   <button id="crearEventoBtn" class="btn">Crear Evento</button>
-</div> 
+<h2>Eventos Activos</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Evento</th>
+      <th>Tipo</th>
+      <th>Fecha</th>
+      <th>Vencimiento Confirmación</th>
+      <th>Lugar</th>
+      <th>Club Organizador</th>
+      <th>Invitados</th>
+      <th>Costo Total</th>
+      <th>Participantes Confirmados</th>
+      <th>Pagos Generados</th>
+    </tr>
+  </thead>
+  <tbody id="eventosActivos"></tbody>
+</table>
 
-   
-  <!-- LISTA DE EVENTOS -->
-  <div class="card" id="section-lista" style="display:none">
-    <h3>Eventos Activos</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Imagen</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Fecha Límite</th>
-          <th>Lugar</th><th>Club Organizador</th><th>Invitados</th><th>Costo Total</th>
-          <th>Jugadores Confirmados</th><th>Pagos</th>
-        </tr>
-      </thead>
-      <tbody id="eventosActivos"></tbody>
-    </table>
+<h2>Eventos Inactivos</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Evento</th>
+      <th>Tipo</th>
+      <th>Fecha</th>
+      <th>Vencimiento Confirmación</th>
+      <th>Lugar</th>
+      <th>Club Organizador</th>
+      <th>Invitados</th>
+      <th>Costo Total</th>
+      <th>Participantes Confirmados</th>
+      <th>Pagos Generados</th>
+    </tr>
+  </thead>
+  <tbody id="eventosInactivos"></tbody>
+</table>
 
-    <h3 style="margin-top:30px;">Mis Invitaciones</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Imagen</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Fecha Límite</th>
-          <th>Lugar</th><th>Club Organizador</th><th>Invitados</th><th>Costo Total</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="misInvitaciones"></tbody>
-    </table>
-
-    <h3 style="margin-top:30px;">Eventos Inactivos</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Imagen</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Fecha Límite</th>
-          <th>Lugar</th><th>Club Organizador</th><th>Invitados</th><th>Costo Total</th>
-          <th>Jugadores Confirmados</th><th>Pagos</th>
-        </tr>
-      </thead>
-      <tbody id="eventosInactivos"></tbody>
-    </table>
-  </div>
-</div>
 <script>
 /* ----------------- Helpers ----------------- */
-function showSection(sec){
-  ['crear','lista'].forEach(s => {
-    const el = document.getElementById('section-'+s);
-    if(el) el.style.display = (s===sec)?'block':'none';
-  });
-}
-function logout(){ window.location.href = 'admin.html'; }
-
-// Normaliza keys: "Imagen" -> "imagen", "Club Organizador" -> "cluborganizador", etc.
 function normalizeEvent(raw) {
   const ev = {};
   for (const k in raw) {
     if (!raw.hasOwnProperty(k)) continue;
-    // normalizar: minusculas, quitar acentos y espacios
     const nk = k.toString()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // quitar diacríticos
-                .toLowerCase()
-                .replace(/\s+/g,''); // quitar espacios
+                .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+                .toLowerCase().replace(/\s+/g,'');
     ev[nk] = raw[k];
   }
   return {
-    // mapeos frecuentes (intentar varios nombres)
-    id: ev.id || ev.idevento || ev.idevent || ev.eventid || '',
-    imagen: ev.imagen || ev.image || ev.url || '',
+    id: ev.id || ev.idevento || ev.idevent || ev.eventid || ev.id,
+    imagen: ev.imagen || ev.image || '',
     titulo: ev.evento || ev.titulo || ev.title || '',
     tipo: ev.tipo || '',
     fecha: ev.fecha || '',
-    fechavencimientoconfirmacion: ev.fechavencimientoconfirmacion || ev.fechavencimiento || ev.fechalimite || '',
+    fechavencimientoconfirmacion: ev.fechavencimientoconfirmacion || ev.fechavencimiento || '',
     direccion: ev.direccion || '',
     numero: ev.numero || '',
     ciudad: ev.ciudad || '',
     provincia: ev.provincia || '',
     pais: ev.pais || '',
-    cluborganizador: ev.cluborganizador || ev['cluborganizador'] || ev['cluborganizador'.toLowerCase()] || '',
+    cluborganizador: ev.cluborganizador || '',
     invitados: ev.invitados || '',
-    costototal: ev.costototal || ev.costo || ev.precio || '',
-    participantesconfirmados: ev.participantesconfirmados || ev.participantes || '',
-    pagosgenerados: ev.pagosgenerados || ev.pagos || '',
-    estadoinvitacion: ev.estadoinvitacion || ev.estado || '' ,
-    // preserve original object for debugging if needed
+    costototal: ev.costototal || '',
+    participantesconfirmados: ev.participantesconfirmados || '',
+    pagosgenerados: ev.pagosgenerados || '',
+    estadoinvitacion: ev.estadoinvitacion || ev.estado || '',
     _raw: raw
   };
 }
 
-/* ----------------- UI row builder ----------------- */
 function crearFilaEvento(evNorm, conAcciones=false){
   const tr = document.createElement('tr');
   const lugar = [evNorm.direccion, evNorm.numero, evNorm.ciudad, evNorm.provincia, evNorm.pais].filter(x => x).join(', ');
   const fechaText = evNorm.fecha ? (new Date(evNorm.fecha).toLocaleString()) : '';
   const fechaVencText = evNorm.fechavencimientoconfirmacion ? (new Date(evNorm.fechavencimientoconfirmacion).toLocaleString()) : '';
-
-  const idAttr = evNorm.id || ''; // id para acciones
+  const idAttr = evNorm.id || '';
   const imgHtml = evNorm.imagen ? `<img src="${evNorm.imagen}" class="event-img" />` : '';
 
-  if(conAcciones) {
+  if(conAcciones){
     tr.innerHTML = `
       <td>${imgHtml}</td>
       <td>${evNorm.titulo}</td>
@@ -171,12 +137,12 @@ function crearFilaEvento(evNorm, conAcciones=false){
       <td>${fechaText}</td>
       <td>${fechaVencText}</td>
       <td>${lugar}</td>
-      <td>${evNorm.cluborganizador || ''}</td>
-      <td>${evNorm.invitados || ''}</td>
-      <td>${evNorm.costototal || ''}</td>
+      <td>${evNorm.cluborganizador}</td>
+      <td>${evNorm.invitados}</td>
+      <td>${evNorm.costototal}</td>
       <td>
-        <button class="btn-accion btn-aceptar" onclick="responderInvitacion('${idAttr}', 'Aceptado')">✅ Aceptar</button>
-        <button class="btn-accion btn-rechazar" onclick="responderInvitacion('${idAttr}', 'Rechazado')">❌ Rechazar</button>
+        <button class="btn-accion" onclick="responderInvitacion('${idAttr}', 'Aceptado')">✅ Aceptar</button>
+        <button class="btn-accion" onclick="responderInvitacion('${idAttr}', 'Rechazado')">❌ Rechazar</button>
       </td>
     `;
   } else {
@@ -187,72 +153,49 @@ function crearFilaEvento(evNorm, conAcciones=false){
       <td>${fechaText}</td>
       <td>${fechaVencText}</td>
       <td>${lugar}</td>
-      <td>${evNorm.cluborganizador || ''}</td>
-      <td>${evNorm.invitados || ''}</td>
-      <td>${evNorm.costototal || ''}</td>
-      <td>${evNorm.participantesconfirmados || ''}</td>
-      <td>${evNorm.pagosgenerados || ''}</td>
+      <td>${evNorm.cluborganizador}</td>
+      <td>${evNorm.invitados}</td>
+      <td>${evNorm.costototal}</td>
+      <td>${evNorm.participantesconfirmados}</td>
+      <td>${evNorm.pagosgenerados}</td>
     `;
   }
 
-  // attach normalized data to DOM row for easy access later
   tr.dataset.eventId = idAttr;
   tr._evNorm = evNorm;
   return tr;
 }
 
-/* ----------------- Fetch / Listado ----------------- */
-async function listarEventos() {
+/* ----------------- Listar Eventos ----------------- */
+async function listarEventos(){
   try {
-    console.log('listando eventos -> llamando Netlify Function...');
-    const response = await fetch('/.netlify/functions/listarEventos');
-    if (!response.ok) {
-      console.error('listarEventos - respuesta NO ok', response.status);
-      return;
-    }
-    const raw = await response.json();
-    console.log('Eventos recibidos en front (raw):', raw);
+    const res = await fetch('/.netlify/functions/listarEventos');
+    if(!res.ok) throw new Error('Error al listar eventos: '+res.status);
+    const raw = await res.json();
+    const eventos = raw.map(normalizeEvent);
 
-    // Normalizar cada evento
-    const eventos = raw.map(r => normalizeEvent(r));
-
-    // tBodies
     const tbodyActivos = document.getElementById('eventosActivos');
     const tbodyInvitaciones = document.getElementById('misInvitaciones');
     const tbodyInactivos = document.getElementById('eventosInactivos');
-    tbodyActivos.innerHTML = ''; tbodyInvitaciones.innerHTML = ''; tbodyInactivos.innerHTML = '';
+    tbodyActivos.innerHTML=''; tbodyInvitaciones.innerHTML=''; tbodyInactivos.innerHTML='';
 
     const hoy = new Date();
 
-    eventos.forEach(ev => {
-      // lógica de clasificación:
+    eventos.forEach(ev=>{
       const fechaEvento = ev.fecha ? new Date(ev.fecha) : null;
-      const estado = (ev.estadoinvitacion || '').toString().toLowerCase();
+      const estado = (ev.estadoinvitacion || '').toLowerCase();
 
-      // Si explícitamente rechazado -> inactivo
-      if (estado === 'rechazado') {
+      if(estado==='rechazado' || (fechaEvento && fechaEvento<hoy)){
         tbodyInactivos.appendChild(crearFilaEvento(ev));
-        return;
-      }
-      // Si la fecha ya pasó -> inactivo
-      if (fechaEvento && fechaEvento < hoy) {
-        tbodyInactivos.appendChild(crearFilaEvento(ev));
-        return;
-      }
-      // Si aceptado -> activos
-      if (estado === 'aceptado' || (ev.participantesconfirmados && ev.participantesconfirmados.toString().trim() !== '')) {
+      } else if(estado==='aceptado' || ev.participantesconfirmados){
         tbodyActivos.appendChild(crearFilaEvento(ev));
-        return;
+      } else {
+        tbodyInvitaciones.appendChild(crearFilaEvento(ev, true));
       }
-      // si está pendiente o no tiene estado -> invitaciones (con botones)
-      tbodyInvitaciones.appendChild(crearFilaEvento(ev, true));
     });
 
-    console.log('Listado renderizado: activos=%d, invitaciones=%d, inactivos=%d',
-      tbodyActivos.children.length, tbodyInvitaciones.children.length, tbodyInactivos.children.length);
-
-  } catch (err) {
-    console.error('Error al listar eventos:', err);
+  } catch(err){
+    console.error(err);
   }
 }
 
@@ -262,90 +205,82 @@ async function crearEvento(){
     const fileInput = document.getElementById('eventoImagen');
     let imageUrl = '';
 
-    if (fileInput && fileInput.files.length > 0) {
+    if(fileInput && fileInput.files.length>0){
       const file = fileInput.files[0];
       const formData = new FormData();
       formData.append('image', file);
-      formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // <-- poné tu key
-      const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
+      formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // reemplazar con tu key
+      const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body:formData });
       const data = await res.json();
       imageUrl = data?.data?.url || '';
-      console.log('Imagen subida a imgbb:', imageUrl);
     }
 
     const datos = {
-      action: 'crearEvento',
+      action:'crearEvento',
       titulo: document.getElementById('titulo').value,
       fecha: document.getElementById('fecha').value,
-      fechaVencimiento: document.getElementById('fechaVencimiento')?.value || '',
+      fechaVencimiento: document.getElementById('fechaVencimiento').value,
       direccion: document.getElementById('direccion').value,
       numero: document.getElementById('numero').value,
       ciudad: document.getElementById('ciudad').value,
       provincia: document.getElementById('provincia').value,
       pais: document.getElementById('pais').value,
-      tipo: document.getElementById('eventType').value,
-      clubOrganizador: document.getElementById('clubOrganizador')?.value || '',
-      invitados: document.getElementById('inviteAll')?.checked ? 'Todos' : (Array.from(document.getElementById('selectClubs')?.selectedOptions || []).map(o => o.value).join(',')),
+      clubOrganizador: document.getElementById('clubOrganizador').value,
+      invitados: document.getElementById('inviteAll').checked ? 'Todos' : '',
       imagen: imageUrl,
-      costoTotal: document.getElementById('costoTotal')?.value || 0
+      costoTotal: document.getElementById('costoTotal').value
     };
 
-    console.log('Datos a enviar a Netlify Function (crearEvento):', datos);
     const res = await fetch('/.netlify/functions/crearEvento', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify(datos)
     });
-    const result = await res.json();
-    console.log('Respuesta crearEvento:', result);
 
-    if (result.status === 'ok') {
-      alert('Evento creado exitosamente');
-      // refrescar listado
+    const result = await res.json();
+    if(result.status==='ok'){
+      alert('Evento creado con éxito');
       listarEventos();
-      // opcional: limpiar formulario (si querés)
+      document.getElementById('formCrearEvento').reset();
     } else {
-      alert('Error al crear evento: ' + JSON.stringify(result));
+      alert('Error al crear evento: '+JSON.stringify(result));
     }
-  } catch (err) {
-    console.error('Error en crearEvento:', err);
-    alert('Error de conexión al crear el evento. Ver consola.');
+
+  } catch(err){
+    console.error('Error crearEvento:', err);
+    alert('Error de conexión. Ver consola.');
   }
 }
 
-/* ----------------- Responder Invitación (aceptar/rechazar) ----------------- */
-async function responderInvitacion(idEvento, estado) {
-  try {
-    console.log('Responder invitación ->', idEvento, estado);
+/* ----------------- Responder Invitación ----------------- */
+async function responderInvitacion(idEvento, estado){
+  try{
     const res = await fetch('/.netlify/functions/responderInvitacion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ idEvento, estado })
     });
     const data = await res.json();
-    console.log('Respuesta responderInvitacion:', data);
-    if (data.status === 'ok') {
+    if(data.status==='ok'){
       listarEventos();
     } else {
-      alert('Error al actualizar invitación: ' + JSON.stringify(data));
+      alert('Error: '+JSON.stringify(data));
     }
-  } catch (err) {
-    console.error('Error respondiendo invitación:', err);
+  } catch(err){
+    console.error('Error responderInvitacion:', err);
+    alert('Error al responder invitación. Ver consola.');
   }
 }
 
-/* ----------------- Inicialización: enganchar botones y listar ----------------- */
-document.addEventListener('DOMContentLoaded', () => {
-  // enganchar botón crear (asegurate de tener <button id="crearEventoBtn">)
-  const btn = document.getElementById('crearEventoBtn');
-  if (btn) btn.addEventListener('click', crearEvento);
-
-  // inicializar listado
+/* ----------------- Inicialización ----------------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('crearEventoBtn').addEventListener('click', crearEvento);
   listarEventos();
 });
 </script>
-
-
-
 </body>
 </html>
+
+
+
+
