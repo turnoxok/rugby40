@@ -88,6 +88,7 @@
     <div class="form-group"><label>País</label><select id="pais"><option>Argentina</option><option>Brasil</option><option>Uruguay</option></select></div>
 
     <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
+   <div class="form-group"><label>Fecha límite para confirmar asistencia</label><input type="datetime-local" id="fechaVencimiento"></div>
     <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div>
 
     <div class="form-group">
@@ -159,6 +160,7 @@ async function crearEvento(){
   action: 'crearEvento',
   titulo: document.getElementById('titulo').value,
   fecha: document.getElementById('fecha').value,
+  fechaVencimiento: document.getElementById('fechaVencimiento').value,
   direccion: document.getElementById('direccion').value,
   numero: document.getElementById('numero').value,
   ciudad: document.getElementById('ciudad').value,
@@ -169,7 +171,7 @@ async function crearEvento(){
   invitados: document.getElementById('inviteAll').checked ? 'Todos' : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
   imagen: imageUrl,
   costoTotal: document.getElementById('costoTotal').value,
-  fechaVencimiento: document.getElementById('fechaVencimiento') ? document.getElementById('fechaVencimiento').value : ''
+  
 };
 
 
