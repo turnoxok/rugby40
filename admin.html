@@ -190,7 +190,7 @@ function registrarClub(){
   if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
   if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
 
-  fetch('https://script.google.com/macros/s/AKfycbwVqtMWSzTgyYCTbZ-waV5MBpbS-n5Rww3c6By7HZckvMDE26NL2ooBkudwUrFE7to4/exec',{
+  fetch('https://script.google.com/macros/s/AKfycby3-TFBkxd5bso4MHx0aa-lzR6EEjuqM5e7DZFcYetucj-_Bq_zdaY-2voJquBvY-Nv/exec',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action:'registrarClub', username, email, password:pass})
