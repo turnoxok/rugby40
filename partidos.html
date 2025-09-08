@@ -64,7 +64,7 @@
   <label>Fecha límite para confirmar asistencia</label><input type="datetime-local" id="fechaVencimiento"></div>
    <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div> 
    <div class="form-group"> <label>Imagen del Evento</label> <input type="file" id="eventoImagen" accept="image/*"> </div> 
-   <button class="btn" onclick="crearEvento()">Crear Evento</button> </div>
+   <button id="crearEventoBtn" class="btn">Crear Evento</button>
   <!-- LISTA DE EVENTOS -->
   <div class="card" id="section-lista" style="display:none">
     <h3>Eventos Activos</h3>
@@ -128,7 +128,7 @@ function crearFilaEvento(ev, conAcciones=false){
     ${conAcciones 
       ? `<td>
           <button onclick="responderInvitacion('${ev.ID}', 'Aceptado')">✅ Aceptar</button>
-    <button onclick="responderInvitacion('${ev.ID}', 'Rechazado')">❌ Rechazar</button>
+          <button onclick="responderInvitacion('${ev.ID}', 'Rechazado')">❌ Rechazar</button>
         </td>`
       : `<td>${ev.ParticipantesConfirmados || ''}</td>
          <td>${ev.PagosGenerados || ''}</td>`
@@ -152,7 +152,6 @@ async function listarEventos() {
   try {
     const response = await fetch('/.netlify/functions/listarEventos');
     const eventos = await response.json();
-
     console.log('Eventos recibidos en front:', eventos);
 
     const tbodyActivos = document.getElementById('eventosActivos');
@@ -167,7 +166,6 @@ async function listarEventos() {
 
     eventos.forEach(ev => {
       const fechaEvento = ev.Fecha ? new Date(ev.Fecha) : null;
-
       if (fechaEvento && fechaEvento < hoy) {
         tbodyInactivos.appendChild(crearFilaEvento(ev)); 
       } else if (ev.ParticipantesConfirmados) {
@@ -182,14 +180,13 @@ async function listarEventos() {
 }
 document.addEventListener('DOMContentLoaded', listarEventos);
 
- async function responderInvitacion(idEvento, estado) {
+async function responderInvitacion(idEvento, estado) {
   try {
     const res = await fetch('/.netlify/functions/responderInvitacion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idEvento, estado })
     });
-
     const data = await res.json();
     alert(data.msg);
     listarEventos(); // 🔄 refrescar listado
@@ -197,6 +194,75 @@ document.addEventListener('DOMContentLoaded', listarEventos);
     console.error('Error respondiendo invitación:', err);
   }
 }
+
+// 🚨 ESTA FUNCIÓN FALTABA 🚨
+async function crearEvento(){
+  const fileInput = document.getElementById('eventoImagen');
+  let imageUrl = '';
+
+  if(fileInput && fileInput.files.length > 0){
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // tu API key imgbb
+
+    try {
+      const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
+      const data = await res.json();
+      imageUrl = data.data.url;
+    } catch(err){
+      console.error('Error subiendo imagen a imgbb:', err);
+      alert('No se pudo subir la imagen. Intenta nuevamente.');
+      return;
+    }
+  }
+
+  const datos = {
+    action: 'crearEvento',
+    titulo: document.getElementById('titulo').value,
+    fecha: document.getElementById('fecha').value,
+    fechaVencimiento: document.getElementById('fechaVencimiento').value,
+    direccion: document.getElementById('direccion').value,
+    numero: document.getElementById('numero').value,
+    ciudad: document.getElementById('ciudad').value,
+    provincia: document.getElementById('provincia').value,
+    pais: document.getElementById('pais').value,
+    tipo: document.getElementById('eventType').value,
+    clubOrganizador: document.getElementById('clubOrganizador').value,
+    invitados: document.getElementById('inviteAll').checked 
+      ? 'Todos' 
+      : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
+    imagen: imageUrl,
+    costoTotal: document.getElementById('costoTotal').value
+  };
+
+  console.log('Datos a enviar a Netlify Function:', datos);
+
+  try {
+    const res = await fetch('/.netlify/functions/crearEvento', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(datos)
+    });
+    const result = await res.json();
+    if(result.status==='ok') {
+      alert('Evento creado exitosamente');
+      listarEventos(); // refrescar lista
+    } else {
+      alert('Error al crear evento: ' + JSON.stringify(result));
+    }
+  } catch (err) {
+    console.error('Error en fetch crearEvento:', err);
+    alert('Error de conexión. Intente nuevamente.');
+  }
+}
+
+// enganchar botón
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('crearEventoBtn');
+  if (btn) btn.addEventListener('click', crearEvento);
+});
 </script>
+
 </body>
 </html>
