@@ -103,19 +103,23 @@
   <div class="card" id="section-lista" style="display:none">
     <h3>Lista de Eventos</h3>
     <table id="eventTable">
-      <thead>
-        <tr>
-          <th>Imagen</th>
-          <th>Título</th>
-          <th>Tipo</th>
-          <th>Fecha</th>
-          <th>Lugar</th>
-          <th>Jugadores Confirmados</th>
-          <th>Pagos</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Título</th>
+      <th>Tipo</th>
+      <th>Fecha</th>
+      <th>Fecha Límite Confirmación</th>
+      <th>Lugar</th>
+      <th>Club Organizador</th>
+      <th>Invitados</th>
+      <th>Costo Total</th>
+      <th>Jugadores Confirmados</th>
+      <th>Pagos</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
   </div>
 </div>
 
@@ -209,10 +213,14 @@ async function crearEvento(){
 
       tr.innerHTML = `
         <td>${ev.Imagen ? `<img src="${ev.Imagen}" class="event-img" />` : ''}</td>
-        <td>${ev.Evento || ev.titulo || ''}</td>
-        <td>${ev.Tipo || ev.tipo || ''}</td>
+        <td>${ev.Evento || ev.Titulo || ''}</td>
+        <td>${ev.Tipo || ''}</td>
         <td>${ev.Fecha ? new Date(ev.Fecha).toLocaleString() : ''}</td>
+        <td>${ev.FechaVencimientoConfirmacion ? new Date(ev.FechaVencimientoConfirmacion).toLocaleString() : ''}</td>
         <td>${[ev.Dirección, ev.Número, ev.Ciudad, ev.Provincia, ev.País].filter(x => x).join(', ')}</td>
+        <td>${ev['Club Organizador'] || ''}</td>
+        <td>${ev.Invitados || ''}</td>
+        <td>${ev.CostoTotal || ''}</td>
         <td>${ev.ParticipantesConfirmados || ''}</td>
         <td>${ev.PagosGenerados || ''}</td>
       `;
