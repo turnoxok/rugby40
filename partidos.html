@@ -45,12 +45,26 @@
     <h1>Partidos/Eventos</h1>
   </div>
 
-  <!-- CREAR EVENTO -->
-  <div class="card" id="section-crear">
-    <h3>Crear Evento</h3>
-    <!-- ... (formulario igual que antes) ... -->
-  </div>
-
+  
+  <!-- CREAR EVENTO --> <div class="card" id="section-crear"> 
+   <h3>Crear Evento</h3> 
+   <div class="form-group">
+    <label>Título del Evento</label> <input type="text" id="titulo" placeholder="Encuentro vs Club XYZ"> </div> 
+   <div class="form-group"> <label>Tipo de Evento</label> <select id="eventType" onchange="toggleEventType()"> <option value="propio">Propio</option> <option value="tercero">Tercero</option> </select> </div> 
+   <div class="form-group" id="clubOrganizerGroup" style="display:none"> <label>Club Organizador</label> <input type="text" id="clubOrganizador" placeholder="Nombre del club externo"> </div> 
+   <div class="form-group" id="inviteClubsGroup"> <label>Enviar invitación a clubes</label> <input type="checkbox" id="inviteAll"> Todos los clubes registrados <select multiple id="selectClubs" style="margin-top:5px;"> <option>Club A</option> <option>Club B</option> <option>Club C</option> </select> </div> 
+   <h4>Ubicación del Evento</h4> 
+   <div class="form-group"><label>Dirección</label><input type="text" id="direccion"></div> 
+   <div class="form-group"><label>Número</label><input type="text" id="numero"></div> 
+   <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"></div> 
+   <div class="form-group"><label>Provincia</label><select id="provincia"><option>Provincia 1</option><option>Provincia 2</option><option>Provincia 3</option></select></div> 
+   <div class="form-group"><label>País</label><select id="pais"><option>Argentina</option><option>Brasil</option><option>Uruguay</option></select></div> 
+   <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
+   <div class="form-group">
+  <label>Fecha límite para confirmar asistencia</label><input type="datetime-local" id="fechaVencimiento"></div>
+   <div class="form-group"><label>Costo Total</label><input type="number" id="costoTotal" placeholder="0"></div> 
+   <div class="form-group"> <label>Imagen del Evento</label> <input type="file" id="eventoImagen" accept="image/*"> </div> 
+   <button class="btn" onclick="crearEvento()">Crear Evento</button> </div>
   <!-- LISTA DE EVENTOS -->
   <div class="card" id="section-lista" style="display:none">
     <h3>Eventos Activos</h3>
