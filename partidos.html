@@ -28,6 +28,7 @@
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #ecf0f1; }
   img.event-img { max-width: 120px; max-height: 80px; border-radius: 4px; }
+ 
 </style>
 </head>
 <body>
@@ -214,6 +215,7 @@ async function crearEvento(){
         <td>${ev.PagosGenerados || ''}</td>
       `;
       tbody.appendChild(tr);
+     console.log(ev.imagen);
     });
   } catch (err) {
     console.error('Error al listar eventos:', err);
