@@ -127,8 +127,8 @@ function crearFilaEvento(ev, conAcciones=false){
     <td>${ev.CostoTotal || ''}</td>
     ${conAcciones 
       ? `<td>
-          <button class="btn-accion btn-aceptar" onclick="moverEvento(this, 'activos')">Aceptar</button>
-          <button class="btn-accion btn-rechazar" onclick="moverEvento(this, 'inactivos')">Rechazar</button>
+          <button onclick="responderInvitacion('${ev.ID}', 'Aceptado')">✅ Aceptar</button>
+    <button onclick="responderInvitacion('${ev.ID}', 'Rechazado')">❌ Rechazar</button>
         </td>`
       : `<td>${ev.ParticipantesConfirmados || ''}</td>
          <td>${ev.PagosGenerados || ''}</td>`
@@ -181,6 +181,22 @@ async function listarEventos() {
   }
 }
 document.addEventListener('DOMContentLoaded', listarEventos);
+
+ async function responderInvitacion(idEvento, estado) {
+  try {
+    const res = await fetch('/.netlify/functions/responderInvitacion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idEvento, estado })
+    });
+
+    const data = await res.json();
+    alert(data.msg);
+    listarEventos(); // 🔄 refrescar listado
+  } catch (err) {
+    console.error('Error respondiendo invitación:', err);
+  }
+}
 </script>
 </body>
 </html>
