@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 exports.handler = async function(event, context) {
   try {
     // URL de tu Google Apps Script Web App
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbx6uCd9BL7PsMsuAYoro3D6Fd2-lhbUNF6hXCFQ8V9jpCtJ-EAuhjEVMAmwoMx8jhze/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwIEIglUxRi9WHE3Dp-RJFSsiQDSKb25IMvh6rGxvvnGEvxGBeD-hsHd6u6cQ7B-Z4f/exec';
 
     // Llamamos al Web App indicando acción "listarEventos"
     const response = await fetch(WEBAPP_URL, {
