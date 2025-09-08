@@ -206,7 +206,7 @@ async function crearEvento(){
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
-        <td>${ev.imagen ? `<img src="${ev.imagen}" class="event-img" />` : ''}</td>
+        <td>${ev.Imagen ? `<img src="${ev.Imagen}" class="event-img" />` : ''}</td>
         <td>${ev.Evento || ev.titulo || ''}</td>
         <td>${ev.Tipo || ev.tipo || ''}</td>
         <td>${ev.Fecha ? new Date(ev.Fecha).toLocaleString() : ''}</td>
