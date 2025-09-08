@@ -104,165 +104,245 @@
     </table>
   </div>
 </div>
-
 <script>
+/* ----------------- Helpers ----------------- */
 function showSection(sec){
   ['crear','lista'].forEach(s => {
-    document.getElementById('section-'+s).style.display = (s===sec)?'block':'none';
+    const el = document.getElementById('section-'+s);
+    if(el) el.style.display = (s===sec)?'block':'none';
   });
 }
 function logout(){ window.location.href = 'admin.html'; }
 
-function crearFilaEvento(ev, conAcciones=false){
+// Normaliza keys: "Imagen" -> "imagen", "Club Organizador" -> "cluborganizador", etc.
+function normalizeEvent(raw) {
+  const ev = {};
+  for (const k in raw) {
+    if (!raw.hasOwnProperty(k)) continue;
+    // normalizar: minusculas, quitar acentos y espacios
+    const nk = k.toString()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // quitar diacríticos
+                .toLowerCase()
+                .replace(/\s+/g,''); // quitar espacios
+    ev[nk] = raw[k];
+  }
+  return {
+    // mapeos frecuentes (intentar varios nombres)
+    id: ev.id || ev.idevento || ev.idevent || ev.eventid || '',
+    imagen: ev.imagen || ev.image || ev.url || '',
+    titulo: ev.evento || ev.titulo || ev.title || '',
+    tipo: ev.tipo || '',
+    fecha: ev.fecha || '',
+    fechavencimientoconfirmacion: ev.fechavencimientoconfirmacion || ev.fechavencimiento || ev.fechalimite || '',
+    direccion: ev.direccion || '',
+    numero: ev.numero || '',
+    ciudad: ev.ciudad || '',
+    provincia: ev.provincia || '',
+    pais: ev.pais || '',
+    cluborganizador: ev.cluborganizador || ev['cluborganizador'] || ev['cluborganizador'.toLowerCase()] || '',
+    invitados: ev.invitados || '',
+    costototal: ev.costototal || ev.costo || ev.precio || '',
+    participantesconfirmados: ev.participantesconfirmados || ev.participantes || '',
+    pagosgenerados: ev.pagosgenerados || ev.pagos || '',
+    estadoinvitacion: ev.estadoinvitacion || ev.estado || '' ,
+    // preserve original object for debugging if needed
+    _raw: raw
+  };
+}
+
+/* ----------------- UI row builder ----------------- */
+function crearFilaEvento(evNorm, conAcciones=false){
   const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${ev.Imagen ? `<img src="${ev.Imagen}" class="event-img" />` : ''}</td>
-    <td>${ev.Evento || ev.Titulo || ''}</td>
-    <td>${ev.Tipo || ''}</td>
-    <td>${ev.Fecha ? new Date(ev.Fecha).toLocaleString() : ''}</td>
-    <td>${ev.FechaVencimientoConfirmacion ? new Date(ev.FechaVencimientoConfirmacion).toLocaleString() : ''}</td>
-    <td>${[ev.Dirección, ev.Número, ev.Ciudad, ev.Provincia, ev.País].filter(x => x).join(', ')}</td>
-    <td>${ev['Club Organizador'] || ''}</td>
-    <td>${ev.Invitados || ''}</td>
-    <td>${ev.CostoTotal || ''}</td>
-    ${conAcciones 
-      ? `<td>
-          <button onclick="responderInvitacion('${ev.ID}', 'Aceptado')">✅ Aceptar</button>
-          <button onclick="responderInvitacion('${ev.ID}', 'Rechazado')">❌ Rechazar</button>
-        </td>`
-      : `<td>${ev.ParticipantesConfirmados || ''}</td>
-         <td>${ev.PagosGenerados || ''}</td>`
-    }
-  `;
+  const lugar = [evNorm.direccion, evNorm.numero, evNorm.ciudad, evNorm.provincia, evNorm.pais].filter(x => x).join(', ');
+  const fechaText = evNorm.fecha ? (new Date(evNorm.fecha).toLocaleString()) : '';
+  const fechaVencText = evNorm.fechavencimientoconfirmacion ? (new Date(evNorm.fechavencimientoconfirmacion).toLocaleString()) : '';
+
+  const idAttr = evNorm.id || ''; // id para acciones
+  const imgHtml = evNorm.imagen ? `<img src="${evNorm.imagen}" class="event-img" />` : '';
+
+  if(conAcciones) {
+    tr.innerHTML = `
+      <td>${imgHtml}</td>
+      <td>${evNorm.titulo}</td>
+      <td>${evNorm.tipo}</td>
+      <td>${fechaText}</td>
+      <td>${fechaVencText}</td>
+      <td>${lugar}</td>
+      <td>${evNorm.cluborganizador || ''}</td>
+      <td>${evNorm.invitados || ''}</td>
+      <td>${evNorm.costototal || ''}</td>
+      <td>
+        <button class="btn-accion btn-aceptar" onclick="responderInvitacion('${idAttr}', 'Aceptado')">✅ Aceptar</button>
+        <button class="btn-accion btn-rechazar" onclick="responderInvitacion('${idAttr}', 'Rechazado')">❌ Rechazar</button>
+      </td>
+    `;
+  } else {
+    tr.innerHTML = `
+      <td>${imgHtml}</td>
+      <td>${evNorm.titulo}</td>
+      <td>${evNorm.tipo}</td>
+      <td>${fechaText}</td>
+      <td>${fechaVencText}</td>
+      <td>${lugar}</td>
+      <td>${evNorm.cluborganizador || ''}</td>
+      <td>${evNorm.invitados || ''}</td>
+      <td>${evNorm.costototal || ''}</td>
+      <td>${evNorm.participantesconfirmados || ''}</td>
+      <td>${evNorm.pagosgenerados || ''}</td>
+    `;
+  }
+
+  // attach normalized data to DOM row for easy access later
+  tr.dataset.eventId = idAttr;
+  tr._evNorm = evNorm;
   return tr;
 }
 
-function moverEvento(btn, destino){
-  const tr = btn.closest("tr");
-  if(destino === "activos"){
-    document.getElementById("eventosActivos").appendChild(tr);
-    tr.querySelector("td:last-child").innerHTML = "Confirmado"; 
-  } else {
-    document.getElementById("eventosInactivos").appendChild(tr);
-    tr.querySelector("td:last-child").innerHTML = "Rechazado";
-  }
-}
-
+/* ----------------- Fetch / Listado ----------------- */
 async function listarEventos() {
   try {
+    console.log('listando eventos -> llamando Netlify Function...');
     const response = await fetch('/.netlify/functions/listarEventos');
-    const eventos = await response.json();
-    console.log('Eventos recibidos en front:', eventos);
+    if (!response.ok) {
+      console.error('listarEventos - respuesta NO ok', response.status);
+      return;
+    }
+    const raw = await response.json();
+    console.log('Eventos recibidos en front (raw):', raw);
 
+    // Normalizar cada evento
+    const eventos = raw.map(r => normalizeEvent(r));
+
+    // tBodies
     const tbodyActivos = document.getElementById('eventosActivos');
     const tbodyInvitaciones = document.getElementById('misInvitaciones');
     const tbodyInactivos = document.getElementById('eventosInactivos');
-
-    tbodyActivos.innerHTML = '';
-    tbodyInvitaciones.innerHTML = '';
-    tbodyInactivos.innerHTML = '';
+    tbodyActivos.innerHTML = ''; tbodyInvitaciones.innerHTML = ''; tbodyInactivos.innerHTML = '';
 
     const hoy = new Date();
 
     eventos.forEach(ev => {
-      const fechaEvento = ev.Fecha ? new Date(ev.Fecha) : null;
-      if (fechaEvento && fechaEvento < hoy) {
-        tbodyInactivos.appendChild(crearFilaEvento(ev)); 
-      } else if (ev.ParticipantesConfirmados) {
-        tbodyActivos.appendChild(crearFilaEvento(ev)); 
-      } else {
-        tbodyInvitaciones.appendChild(crearFilaEvento(ev, true)); 
+      // lógica de clasificación:
+      const fechaEvento = ev.fecha ? new Date(ev.fecha) : null;
+      const estado = (ev.estadoinvitacion || '').toString().toLowerCase();
+
+      // Si explícitamente rechazado -> inactivo
+      if (estado === 'rechazado') {
+        tbodyInactivos.appendChild(crearFilaEvento(ev));
+        return;
       }
+      // Si la fecha ya pasó -> inactivo
+      if (fechaEvento && fechaEvento < hoy) {
+        tbodyInactivos.appendChild(crearFilaEvento(ev));
+        return;
+      }
+      // Si aceptado -> activos
+      if (estado === 'aceptado' || (ev.participantesconfirmados && ev.participantesconfirmados.toString().trim() !== '')) {
+        tbodyActivos.appendChild(crearFilaEvento(ev));
+        return;
+      }
+      // si está pendiente o no tiene estado -> invitaciones (con botones)
+      tbodyInvitaciones.appendChild(crearFilaEvento(ev, true));
     });
+
+    console.log('Listado renderizado: activos=%d, invitaciones=%d, inactivos=%d',
+      tbodyActivos.children.length, tbodyInvitaciones.children.length, tbodyInactivos.children.length);
+
   } catch (err) {
     console.error('Error al listar eventos:', err);
   }
 }
-document.addEventListener('DOMContentLoaded', listarEventos);
 
-async function responderInvitacion(idEvento, estado) {
-  try {
-    const res = await fetch('/.netlify/functions/responderInvitacion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idEvento, estado })
-    });
-    const data = await res.json();
-    alert(data.msg);
-    listarEventos(); // 🔄 refrescar listado
-  } catch (err) {
-    console.error('Error respondiendo invitación:', err);
-  }
-}
-
-// 🚨 ESTA FUNCIÓN FALTABA 🚨
+/* ----------------- Crear Evento ----------------- */
 async function crearEvento(){
-  const fileInput = document.getElementById('eventoImagen');
-  let imageUrl = '';
+  try {
+    const fileInput = document.getElementById('eventoImagen');
+    let imageUrl = '';
 
-  if(fileInput && fileInput.files.length > 0){
-    const file = fileInput.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // tu API key imgbb
-
-    try {
+    if (fileInput && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('key', '5e7ff6621fb603a7835a4b4ec45fd4eb'); // <-- poné tu key
       const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
       const data = await res.json();
-      imageUrl = data.data.url;
-    } catch(err){
-      console.error('Error subiendo imagen a imgbb:', err);
-      alert('No se pudo subir la imagen. Intenta nuevamente.');
-      return;
+      imageUrl = data?.data?.url || '';
+      console.log('Imagen subida a imgbb:', imageUrl);
     }
-  }
 
-  const datos = {
-    action: 'crearEvento',
-    titulo: document.getElementById('titulo').value,
-    fecha: document.getElementById('fecha').value,
-    fechaVencimiento: document.getElementById('fechaVencimiento').value,
-    direccion: document.getElementById('direccion').value,
-    numero: document.getElementById('numero').value,
-    ciudad: document.getElementById('ciudad').value,
-    provincia: document.getElementById('provincia').value,
-    pais: document.getElementById('pais').value,
-    tipo: document.getElementById('eventType').value,
-    clubOrganizador: document.getElementById('clubOrganizador').value,
-    invitados: document.getElementById('inviteAll').checked 
-      ? 'Todos' 
-      : Array.from(document.getElementById('selectClubs').selectedOptions).map(o => o.value).join(','),
-    imagen: imageUrl,
-    costoTotal: document.getElementById('costoTotal').value
-  };
+    const datos = {
+      action: 'crearEvento',
+      titulo: document.getElementById('titulo').value,
+      fecha: document.getElementById('fecha').value,
+      fechaVencimiento: document.getElementById('fechaVencimiento')?.value || '',
+      direccion: document.getElementById('direccion').value,
+      numero: document.getElementById('numero').value,
+      ciudad: document.getElementById('ciudad').value,
+      provincia: document.getElementById('provincia').value,
+      pais: document.getElementById('pais').value,
+      tipo: document.getElementById('eventType').value,
+      clubOrganizador: document.getElementById('clubOrganizador')?.value || '',
+      invitados: document.getElementById('inviteAll')?.checked ? 'Todos' : (Array.from(document.getElementById('selectClubs')?.selectedOptions || []).map(o => o.value).join(',')),
+      imagen: imageUrl,
+      costoTotal: document.getElementById('costoTotal')?.value || 0
+    };
 
-  console.log('Datos a enviar a Netlify Function:', datos);
-
-  try {
+    console.log('Datos a enviar a Netlify Function (crearEvento):', datos);
     const res = await fetch('/.netlify/functions/crearEvento', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(datos)
     });
     const result = await res.json();
-    if(result.status==='ok') {
+    console.log('Respuesta crearEvento:', result);
+
+    if (result.status === 'ok') {
       alert('Evento creado exitosamente');
-      listarEventos(); // refrescar lista
+      // refrescar listado
+      listarEventos();
+      // opcional: limpiar formulario (si querés)
     } else {
       alert('Error al crear evento: ' + JSON.stringify(result));
     }
   } catch (err) {
-    console.error('Error en fetch crearEvento:', err);
-    alert('Error de conexión. Intente nuevamente.');
+    console.error('Error en crearEvento:', err);
+    alert('Error de conexión al crear el evento. Ver consola.');
   }
 }
 
-// enganchar botón
+/* ----------------- Responder Invitación (aceptar/rechazar) ----------------- */
+async function responderInvitacion(idEvento, estado) {
+  try {
+    console.log('Responder invitación ->', idEvento, estado);
+    const res = await fetch('/.netlify/functions/responderInvitacion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idEvento, estado })
+    });
+    const data = await res.json();
+    console.log('Respuesta responderInvitacion:', data);
+    if (data.status === 'ok') {
+      listarEventos();
+    } else {
+      alert('Error al actualizar invitación: ' + JSON.stringify(data));
+    }
+  } catch (err) {
+    console.error('Error respondiendo invitación:', err);
+  }
+}
+
+/* ----------------- Inicialización: enganchar botones y listar ----------------- */
 document.addEventListener('DOMContentLoaded', () => {
+  // enganchar botón crear (asegurate de tener <button id="crearEventoBtn">)
   const btn = document.getElementById('crearEventoBtn');
   if (btn) btn.addEventListener('click', crearEvento);
+
+  // inicializar listado
+  listarEventos();
 });
 </script>
+
+
 
 </body>
 </html>
