@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOtMf2865kYSQ-0kuUBkKqk9zA08TNcoW9KQTjVa7cTwFR0hpCyPqrkgh6FjjzSFAo/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypWNlDdOAcFd-h9f4XLhga-PQjjcV_vhVDybHUtAx3Vyw-MrFxqT_sGwVQ2x3ppLqF/exec";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
