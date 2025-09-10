@@ -6,7 +6,9 @@
 <title>Club Rugby Veteranos</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f6fa; }
-.header { background:#2c3e50; color:#fff; padding:15px; text-align:center; }
+.header { position: relative; height: 200px; background:#2c3e50; color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; }
+.header img { width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1; }
+.header h1 { position:relative; z-index:2; font-size:2em; text-shadow: 1px 1px 5px rgba(0,0,0,0.7); }
 .container { max-width:800px; margin:20px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
 label { font-weight:bold; display:block; margin-top:10px; }
 input, textarea { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:6px; }
@@ -15,7 +17,9 @@ button:hover { background:#219150; }
 </style>
 </head>
 <body>
+
 <div class="header">
+  <img id="portadaImg" src="" alt="Portada">
   <h1 id="clubName">Cargando club...</h1>
 </div>
 
@@ -48,8 +52,8 @@ button:hover { background:#219150; }
 
 <script>
 const API_URL = "/.netlify/functions/api";
-const path = window.location.pathname;   // "/MiClub"
-const username = path.slice(1);          // "MiClub"
+const path = window.location.pathname;   
+const username = path.slice(1);          
 
 const perfilNombre = document.getElementById("perfilNombre");
 const perfilDireccion = document.getElementById("perfilDireccion");
@@ -61,6 +65,7 @@ const perfilPortada = document.getElementById("perfilPortada");
 const clubName = document.getElementById("clubName");
 const loginBtn = document.getElementById("loginBtn");
 const guardarBtn = document.getElementById("guardarBtn");
+const portadaImg = document.getElementById("portadaImg");
 
 let loggedAsAdmin = false;
 
@@ -82,13 +87,16 @@ async function cargarClub() {
       perfilWhatsapp.value = data.perfil.WhatsApp || "";
       perfilInstagram.value = data.perfil.Instagram || "";
       perfilPortada.value = data.perfil.Portada || "";
+      portadaImg.src = data.perfil.Portada || "";
       bloquearInputs();
     } else {
       clubName.textContent = "Club no encontrado";
+      portadaImg.style.display="none";
     }
   } catch(err){
     console.error(err);
     clubName.textContent = "Error cargando club";
+    portadaImg.style.display="none";
   }
 }
 
@@ -158,8 +166,10 @@ guardarBtn.addEventListener("click", async ()=>{
       body: JSON.stringify({action:"actualizarPerfilClub", ...perfil})
     });
     const data = await res.json();
-    if(data.status==="ok") alert("Perfil guardado correctamente");
-    else alert("Error: "+data.msg);
+    if(data.status==="ok") {
+      alert("Perfil guardado correctamente");
+      portadaImg.src = perfil.Portada;
+    } else alert("Error: "+data.msg);
   } catch(err){
     alert("Error al guardar: "+err.message);
   }
