@@ -3,62 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Club Rugby</title>
+<title>Club Rugby Veteranos</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f6fa; }
-header { background:#2c3e50; color:#fff; padding:20px; text-align:center; }
-section { max-width:800px; margin:20px auto; padding:20px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-h1,h2 { color:#2c3e50; }
-button { background:#27ae60; color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; }
+.header { background:#2c3e50; color:#fff; padding:15px; text-align:center; }
+.container { max-width:800px; margin:20px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
+label { font-weight:bold; display:block; margin-top:10px; }
+input, textarea { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:6px; }
+button { margin-top:15px; padding:10px 15px; border:none; background:#27ae60; color:#fff; border-radius:6px; cursor:pointer; }
 button:hover { background:#219150; }
-.login-container, .admin-container, .jugador-container { margin-top:20px; }
-input { padding:8px; width:100%; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
 </style>
 </head>
 <body>
+<div class="header">
+  <h1 id="clubName">Cargando club...</h1>
+</div>
 
-<header>
-  <h1 id="clubNombre">Cargando Club...</h1>
-</header>
+<div class="container" id="profileContainer">
+  <h2>Perfil del Club</h2>
+  <label>Nombre del Club</label>
+  <input type="text" id="perfilNombre" disabled>
+  
+  <label>Dirección</label>
+  <input type="text" id="perfilDireccion" disabled>
 
-<section>
-  <h2>Información del Club</h2>
-  <p><strong>Dirección:</strong> <span id="clubDireccion"></span></p>
-  <p><strong>Teléfono:</strong> <span id="clubTelefono"></span></p>
-  <p><strong>Descripción:</strong> <span id="clubDescripcion"></span></p>
-  <p><strong>WhatsApp:</strong> <span id="clubWhatsapp"></span></p>
-  <p><strong>Instagram:</strong> <span id="clubInstagram"></span></p>
-</section>
+  <label>Teléfono</label>
+  <input type="text" id="perfilTelefono" disabled>
 
-<!-- LOGIN ADMIN -->
-<section class="login-container">
-  <h2>Acceso Admin</h2>
-  <input type="password" id="adminPass" placeholder="Contraseña Admin">
-  <button onclick="loginAdmin()">Ingresar</button>
-</section>
+  <label>Quiénes somos</label>
+  <textarea id="perfilDescripcion" rows="4" disabled></textarea>
 
-<section class="admin-container" style="display:none;">
-  <h2>Panel Admin</h2>
-  <p>¡Bienvenido, administrador!</p>
-  <button onclick="editarPerfil()">Editar Perfil</button>
-</section>
+  <label>WhatsApp</label>
+  <input type="text" id="perfilWhatsapp" disabled>
 
-<!-- LOGIN JUGADOR -->
-<section class="jugador-container">
-  <h2>Acceso Jugador</h2>
-  <input type="text" id="jugadorDNI" placeholder="DNI">
-  <input type="password" id="jugadorPass" placeholder="Contraseña">
-  <button onclick="loginJugador()">Ingresar</button>
-</section>
+  <label>Instagram</label>
+  <input type="text" id="perfilInstagram" disabled>
+
+  <label>Portada (URL)</label>
+  <input type="text" id="perfilPortada" disabled>
+
+  <button id="loginBtn">Acceso Admin</button>
+</div>
 
 <script>
 const API_URL = "/.netlify/functions/api";
-const pathParts = window.location.pathname.split("/").filter(p=>p);
-const username = pathParts[0]; // primer segmento de URL
-let clubData = null;
+
+const path = window.location.pathname;      // "/miclub"
+const username = path.substring(1);         // "miclub"
+
+const perfilNombre = document.getElementById("perfilNombre");
+const perfilDireccion = document.getElementById("perfilDireccion");
+const perfilTelefono = document.getElementById("perfilTelefono");
+const perfilDescripcion = document.getElementById("perfilDescripcion");
+const perfilWhatsapp = document.getElementById("perfilWhatsapp");
+const perfilInstagram = document.getElementById("perfilInstagram");
+const perfilPortada = document.getElementById("perfilPortada");
+const clubName = document.getElementById("clubName");
+const loginBtn = document.getElementById("loginBtn");
+
+let loggedAsAdmin = false;
 
 // Cargar datos del club
-async function cargarClub() {
+async function cargarClub(username) {
   try {
     const res = await fetch(API_URL, {
       method:"POST",
@@ -66,69 +72,73 @@ async function cargarClub() {
       body: JSON.stringify({action:"obtenerPerfilClub", username})
     });
     const data = await res.json();
-    if(data.status==='ok'){
-      clubData = data.perfil;
-      document.getElementById("clubNombre").innerText = clubData.NombreClub || username;
-      document.getElementById("clubDireccion").innerText = clubData.Dirección || '';
-      document.getElementById("clubTelefono").innerText = clubData.Teléfono || '';
-      document.getElementById("clubDescripcion").innerText = clubData.Descripción || '';
-      document.getElementById("clubWhatsapp").innerText = clubData.WhatsApp || '';
-      document.getElementById("clubInstagram").innerText = clubData.Instagram || '';
+    if(data.status==="ok") {
+      clubName.textContent = data.perfil.NombreClub || username;
+      perfilNombre.value = data.perfil.NombreClub || "";
+      perfilDireccion.value = data.perfil.Dirección || "";
+      perfilTelefono.value = data.perfil.Teléfono || "";
+      perfilDescripcion.value = data.perfil.Descripción || "";
+      perfilWhatsapp.value = data.perfil.WhatsApp || "";
+      perfilInstagram.value = data.perfil.Instagram || "";
+      perfilPortada.value = data.perfil.Portada || "";
+
+      // Si no es admin, bloquear inputs
+      bloquearInputs();
     } else {
-      document.getElementById("clubNombre").innerText = "Club no encontrado";
+      clubName.textContent = "Club no encontrado";
     }
   } catch(err){
     console.error(err);
-    document.getElementById("clubNombre").innerText = "Error al cargar club";
+    clubName.textContent = "Error cargando club";
   }
 }
 
-// Login Admin
-function loginAdmin(){
-  const pass = document.getElementById("adminPass").value;
-  if(!clubData){ alert("Datos no cargados"); return; }
-  if(pass===clubData.Password){
-    document.querySelector(".login-container").style.display="none";
-    document.querySelector(".admin-container").style.display="block";
-  } else {
-    alert("Contraseña incorrecta");
-  }
+function bloquearInputs(){
+  perfilNombre.disabled = true;
+  perfilDireccion.disabled = true;
+  perfilTelefono.disabled = true;
+  perfilDescripcion.disabled = true;
+  perfilWhatsapp.disabled = true;
+  perfilInstagram.disabled = true;
+  perfilPortada.disabled = true;
 }
 
-// Editar Perfil Admin
-function editarPerfil(){
-  alert("Aquí podés abrir el formulario de edición del club...");
-}
+// Login admin simple
+loginBtn.addEventListener("click", async ()=>{
+  const pass = prompt("Ingrese contraseña de admin:");
+  if(!pass) return;
 
-// Login Jugador
-async function loginJugador(){
-  const dni = document.getElementById("jugadorDNI").value;
-  const pass = document.getElementById("jugadorPass").value;
-  if(!dni || !pass){ alert("Ingrese DNI y contraseña"); return; }
-
-  try {
+  try{
     const res = await fetch(API_URL, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({action:"loginJugador", dni, password:pass})
+      body: JSON.stringify({action:"loginClub", username, password:pass})
     });
     const data = await res.json();
-    if(data.status==='ok'){
-      // Redirigir a perfil.html con club y dni
-      const params = new URLSearchParams({club: username, dni});
-      window.location.href = `perfil.html?${params.toString()}`;
+    if(data.status==="ok"){
+      alert("Bienvenido Admin");
+      desbloquearInputs();
+      loggedAsAdmin = true;
     } else {
-      alert("Error: "+data.msg);
+      alert("Contraseña incorrecta");
     }
   } catch(err){
     console.error(err);
-    alert("Error de login jugador");
+    alert("Error al loguear");
   }
+});
+
+function desbloquearInputs(){
+  perfilNombre.disabled = false;
+  perfilDireccion.disabled = false;
+  perfilTelefono.disabled = false;
+  perfilDescripcion.disabled = false;
+  perfilWhatsapp.disabled = false;
+  perfilInstagram.disabled = false;
+  perfilPortada.disabled = false;
 }
 
-// Iniciar
-cargarClub();
+cargarClub(username);
 </script>
-
 </body>
 </html>
