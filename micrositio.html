@@ -219,6 +219,7 @@ async function cargarClub() {
       body:JSON.stringify({action:"obtenerPerfilClub", username})
     });
     const data = await res.json();
+    console.log("Respuesta completa de API:", data); // 👈 LOG GENERAL
     if(data.status==="ok"){
       const p = data.perfil;
       clubName.textContent = p.NombreClub || username;
