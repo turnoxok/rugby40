@@ -3,39 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Panel Admin - Rugby Veteranos</title>
+<title>Registro Club - Rugby Veteranos</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-body { display: flex; min-height: 100vh; background: #f5f6fa; }
-
-/* Contenedores login/registro */
-.login-container, .register-container { display: flex; align-items: center; justify-content: center; width: 100%; }
-.login-box, .register-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); width: 320px; }
-.login-box h2, .register-box h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f6fa; }
+.register-container { display: flex; align-items: center; justify-content: center; width: 100%; }
+.register-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); width: 320px; }
+.register-box h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
 .form-group { margin-bottom: 15px; }
 .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-.form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-.btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+.form-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+.btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; width: 100%; }
 .btn:hover { background: #219150; }
-
-/* Sidebar y Main */
-.sidebar { width: 250px; background: #2c3e50; color: #ecf0f1; padding: 20px; }
-.sidebar h2 { margin-bottom: 30px; font-size: 20px; }
-.sidebar ul { list-style: none; }
-.sidebar ul li { margin: 15px 0; }
-.sidebar ul li a { color: #ecf0f1; text-decoration: none; display: block; padding: 8px 10px; border-radius: 6px; }
-.sidebar ul li a:hover { background: #34495e; }
-.main { flex: 1; padding: 20px; }
-.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.topbar h1 { font-size: 24px; color: #2c3e50; }
-.card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-.card h3 { margin-bottom: 15px; font-size: 18px; color: #2c3e50; }
+p { text-align: center; margin-top: 10px; }
 </style>
 </head>
 <body>
 
 <!-- REGISTER -->
-<div class="register-container" id="registerScreen">
+<div class="register-container">
   <div class="register-box">
     <h2>Registro Club</h2>
     <div class="form-group">
@@ -55,199 +41,45 @@ body { display: flex; min-height: 100vh; background: #f5f6fa; }
       <input type="password" id="regPass2" placeholder="********">
     </div>
     <button class="btn" onclick="registrarClub()">Registrar</button>
-    <p style="margin-top:10px;text-align:center;">
-      ¿Ya tenés cuenta? <a href="#" onclick="showLogin()">Ingresar</a>
-    </p>
-  </div>
-</div>
-
-<!-- LOGIN -->
-<div class="login-container" id="loginScreen" style="display:none;">
-  <div class="login-box">
-    <h2>Login Admin</h2>
-    <div class="form-group">
-      <label>Usuario</label>
-      <input type="text" id="adminUsername" placeholder="MiClubRugby">
-    </div>
-    <div class="form-group">
-      <label>Contraseña</label>
-      <input type="password" id="adminPass" placeholder="********">
-    </div>
-    <button class="btn" onclick="login()">Ingresar</button>
-    <p style="margin-top:10px;text-align:center;">
-      ¿No tenés cuenta? <a href="#" onclick="showRegister()">Registrarse</a>
-    </p>
-  </div>
-</div>
-
-<!-- DASHBOARD -->
-<div style="display:none; width:100%" id="dashboard">
-  <div class="sidebar">
-    <h2>Mi Club</h2>
-    <ul>
-      <li><a href="#" onclick="showSection('perfil')">⚙️ Perfil</a></li>
-      <li><a href="#" onclick="logout()">Salir</a></li>
-    </ul>
-  </div>
-
-  <div class="main">
-    <div class="topbar">
-      <h1>Panel Admin</h1>
-    </div>
-
-    <!-- PERFIL -->
-    <div class="card" id="section-perfil" style="display:none;">
-      <h3>Perfil del Club</h3>
-      <div class="form-group">
-        <label>Nombre del Club</label>
-        <input type="text" id="perfilNombre">
-      </div>
-      <div class="form-group">
-        <label>Dirección</label>
-        <input type="text" id="perfilDireccion">
-      </div>
-      <div class="form-group">
-        <label>Teléfono</label>
-        <input type="text" id="perfilTelefono">
-      </div>
-      <div class="form-group">
-        <label>Quiénes somos</label>
-        <textarea id="perfilDescripcion" rows="4"></textarea>
-      </div>
-      <div class="form-group">
-        <label>WhatsApp</label>
-        <input type="text" id="perfilWhatsapp">
-      </div>
-      <div class="form-group">
-        <label>Instagram</label>
-        <input type="text" id="perfilInstagram">
-      </div>
-      <div class="form-group">
-        <label>Portada (URL)</label>
-        <input type="text" id="perfilPortada">
-      </div>
-      <button class="btn" onclick="guardarPerfil()">Guardar Perfil</button>
-    </div>
+    <p>¿Ya tenés cuenta? <a href="/username">Ingresar</a></p>
   </div>
 </div>
 
 <script>
 const API_URL = "/.netlify/functions/api";
-let loggedUsername = null;
 
-function showRegister(){
-  document.getElementById("registerScreen").style.display="flex";
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("dashboard").style.display="none";
-}
-
-function showLogin(){
-  document.getElementById("registerScreen").style.display="none";
-  document.getElementById("loginScreen").style.display="flex";
-  document.getElementById("dashboard").style.display="none";
-}
-
-function logout(){
-  loggedUsername=null;
-  document.getElementById("dashboard").style.display="none";
-  showLogin();
-}
-
-// Registrar
 function registrarClub(){
   const username = document.getElementById('regUsername').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const pass = document.getElementById('regPass').value;
   const pass2 = document.getElementById('regPass2').value;
-  if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
-  if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
+
+  if(!username||!email||!pass||!pass2){
+    alert('Complete todos los campos');
+    return;
+  }
+
+  if(pass!==pass2){
+    alert('Las contraseñas no coinciden');
+    return;
+  }
 
   fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({action:'registrarClub', username, email, password: pass})
-  }).then(r=>r.json()).then(data=>{
-    if(data.status==='ok'){ alert('Cuenta creada! Ahora ingrese'); showLogin();}
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(data.status==='ok'){ 
+      alert('Cuenta creada! Se abrirá tu micrositio para editar tu perfil.');
+      window.location.href = "/" + username; // 🔹 redirige automáticamente al micrositio
+    }
     else alert('Error: '+(data.msg || JSON.stringify(data)));
-  }).catch(err=>{
+  })
+  .catch(err=>{
     alert('Error fetch: '+err.message);
   });
-}
-
-// Login
-function login(){
-  const username = document.getElementById("adminUsername").value.trim();
-  const pass = document.getElementById("adminPass").value;
-
-  fetch(API_URL, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({action:"loginClub", username, password:pass})
-  }).then(r=>r.json()).then(data=>{
-    if(data.status==="ok"){
-      loggedUsername = username;
-      document.getElementById("loginScreen").style.display="none";
-      document.getElementById("dashboard").style.display="flex";
-      cargarPerfil();
-    } else alert("Error: "+data.msg);
-  });
-}
-
-// Mostrar sección
-function showSection(sec){
-  const sections = ['perfil'];
-  sections.forEach(s=>{
-    document.getElementById('section-'+s).style.display=(s===sec)?'block':'none';
-  });
-}
-
-// Cargar Perfil
-function cargarPerfil(){
-  if(!loggedUsername) return;
-  showSection('perfil');
-
-  fetch(API_URL, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({action:'obtenerPerfilClub', username:loggedUsername})
-  }).then(r=>r.json()).then(data=>{
-    if(data.status==='ok'){
-      document.getElementById('perfilNombre').value = data.perfil.nombreClub || '';
-      document.getElementById('perfilDireccion').value = data.perfil.direccion || '';
-      document.getElementById('perfilTelefono').value = data.perfil.telefono || '';
-      document.getElementById('perfilDescripcion').value = data.perfil.descripcion || '';
-      document.getElementById('perfilWhatsapp').value = data.perfil.whatsapp || '';
-      document.getElementById('perfilInstagram').value = data.perfil.instagram || '';
-      document.getElementById('perfilPortada').value = data.perfil.portada || '';
-    } else { alert('Error al cargar perfil'); }
-  });
-}
-
-// Guardar Perfil
-function guardarPerfil(){
-  if(!loggedUsername) return;
-  const perfil = {
-  username: loggedUsername,
-  NombreClub: document.getElementById("perfilNombre").value,
-  Dirección: document.getElementById("perfilDireccion").value,
-  Teléfono: document.getElementById("perfilTelefono").value,
-  Descripción: document.getElementById("perfilDescripcion").value,
-  WhatsApp: document.getElementById("perfilWhatsapp").value,
-  Instagram: document.getElementById("perfilInstagram").value,
-  Portada: document.getElementById("perfilPortada").value
-};
-
-
-  fetch(API_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ action: "actualizarPerfilClub", ...perfil })
-})
-.then(r => r.json())
-.then(data => {
-  if (data.status === "ok") alert("Perfil guardado");
-  else alert("Error: " + data.msg);
-});
 }
 </script>
 </body>
