@@ -60,11 +60,26 @@ input, textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:
 const API_URL = "/.netlify/functions/api";
 let loggedUsername = null;
 
-function showRegister(){ document.getElementById("registerScreen").style.display="flex"; document.getElementById("loginScreen").style.display="none"; }
-function showLogin(){ document.getElementById("registerScreen").style.display="none"; document.getElementById("loginScreen").style.display="flex"; }
-function logout(){ loggedUsername=null; document.getElementById("dashboard").style.display="none"; showLogin(); }
+// -------------------- Vistas --------------------
+function showRegister(){
+  document.getElementById("registerScreen").style.display="flex";
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("dashboard").style.display="none";
+}
 
-// Registrar
+function showLogin(){
+  document.getElementById("registerScreen").style.display="none";
+  document.getElementById("loginScreen").style.display="flex";
+  document.getElementById("dashboard").style.display="none";
+}
+
+function logout(){
+  loggedUsername=null;
+  document.getElementById("dashboard").style.display="none";
+  showLogin();
+}
+
+// -------------------- Registrar Club --------------------
 function registrarClub(){
   const username = document.getElementById('regUsername').value.trim();
   const email = document.getElementById('regEmail').value.trim();
@@ -73,53 +88,106 @@ function registrarClub(){
   if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
   if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
 
-  fetch('/.netlify/functions/api', {   // 🔹 apuntamos a nuestra función Netlify
+  fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({action:'registrarClub', username, email, password: pass})
-  }).then(r=>r.json()).then(data=>{
-    if(data.status==='ok'){ alert('Cuenta creada! Ahora ingrese'); showLogin();}
-    else alert('Error: '+(data.msg || JSON.stringify(data)));
-  }).catch(err=>{
-    alert('Error fetch: '+err.message);
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==='ok'){ 
+      alert('Cuenta creada! Ahora ingrese'); 
+      showLogin();
+    } else alert('Error: '+(data.msg || JSON.stringify(data)));
+  })
+  .catch(err=>{
+    console.error(err);
+    alert('Error de conexión: '+err.message);
   });
 }
 
-// Login
+// -------------------- Login --------------------
 function login(){
   const username = document.getElementById("adminUsername").value.trim();
   const pass = document.getElementById("adminPass").value;
+  if(!username || !pass){ alert("Ingrese usuario y contraseña"); return; }
+
   fetch(API_URL, {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({action:"loginClub", username, password:pass})
-  }).then(r=>r.json()).then(data=>{
+  })
+  .then(r=>r.json())
+  .then(data=>{
     if(data.status==="ok"){
       loggedUsername = username;
       document.getElementById("loginScreen").style.display="none";
       document.getElementById("dashboard").style.display="block";
+      cargarPerfil();
     } else alert("Error: "+data.msg);
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Error de conexión: "+err.message);
   });
 }
 
-// Guardar Perfil
-function guardarPerfil(){
-  const perfil = {
-    username: loggedUsername,
-    nombre: document.getElementById("perfilNombre").value,
-    direccion: document.getElementById("perfilDireccion").value,
-    telefono: document.getElementById("perfilTelefono").value,
-    descripcion: document.getElementById("perfilDescripcion").value
-  };
+// -------------------- Perfil --------------------
+function cargarPerfil(){
+  if(!loggedUsername) return;
   fetch(API_URL, {
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({action:"guardarPerfil", ...perfil})
-  }).then(r=>r.json()).then(data=>{
+    body: JSON.stringify({action:"obtenerPerfilClub", username: loggedUsername})
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==="ok"){
+      const p = data.perfil;
+      document.getElementById("perfilNombre").value = p.nombreClub || '';
+      document.getElementById("perfilDireccion").value = p.direccion || '';
+      document.getElementById("perfilTelefono").value = p.telefono || '';
+      document.getElementById("perfilDescripcion").value = p.descripcion || '';
+      document.getElementById("perfilWhatsapp").value = p.whatsapp || '';
+      document.getElementById("perfilInstagram").value = p.instagram || '';
+      document.getElementById("perfilPortada").value = p.portada || '';
+    } else alert("Error al cargar perfil: "+data.msg);
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Error de conexión: "+err.message);
+  });
+}
+
+function guardarPerfil(){
+  if(!loggedUsername) return;
+  const perfil = {
+    username: loggedUsername,
+    nombreClub: document.getElementById("perfilNombre").value.trim(),
+    direccion: document.getElementById("perfilDireccion").value.trim(),
+    telefono: document.getElementById("perfilTelefono").value.trim(),
+    descripcion: document.getElementById("perfilDescripcion").value.trim(),
+    whatsapp: document.getElementById("perfilWhatsapp").value.trim(),
+    instagram: document.getElementById("perfilInstagram").value.trim(),
+    portada: document.getElementById("perfilPortada").value.trim()
+  };
+
+  fetch(API_URL, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({action:"actualizarPerfilClub", ...perfil})
+  })
+  .then(r=>r.json())
+  .then(data=>{
     if(data.status==="ok") alert("Perfil guardado");
-    else alert("Error: "+data.msg);
+    else alert("Error al guardar perfil: "+(data.msg || JSON.stringify(data)));
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Error de conexión: "+err.message);
   });
 }
 </script>
+
 </body>
 </html>
