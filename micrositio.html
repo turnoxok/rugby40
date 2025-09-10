@@ -243,10 +243,17 @@ async function cargarClub() {
       if(p.Dirección) mapa.src = `https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
 
       // Partidos
-     // Traer partidos de la misma API que partidos.html
-    const res2 = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"listarEventos" }) });
+  async function cargarClub() {
+  try {
+    // ... código de fetch del perfil del club ...
+
+    // Partidos
+    const res2 = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ action:"listarEventos" })
+    });
     const partidos = await res2.json();
-    // Filtrar aprobados y de este club
     const partidosFiltrados = partidos.filter(p => p.clubOrganizador === username && p.EstadoInvitacion === "Aprobado");
 
     listaPartidos.innerHTML = "";
@@ -272,7 +279,7 @@ async function cargarClub() {
     console.error(err);
     clubName.textContent="Error cargando club";
   }
-}
+} // <-- cierre final de la función
 
  
 
