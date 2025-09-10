@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Club Rugby</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f6fa; }
+header { background:#2c3e50; color:#fff; padding:20px; text-align:center; }
+section { max-width:800px; margin:20px auto; padding:20px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+h1,h2 { color:#2c3e50; }
+button { background:#27ae60; color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; }
+button:hover { background:#219150; }
+.login-container, .admin-container { margin-top:20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="clubNombre">Cargando Club...</h1>
+</header>
+
+<section>
+  <h2>Información del Club</h2>
+  <p><strong>Dirección:</strong> <span id="clubDireccion"></span></p>
+  <p><strong>Teléfono:</strong> <span id="clubTelefono"></span></p>
+  <p><strong>Descripción:</strong> <span id="clubDescripcion"></span></p>
+  <p><strong>WhatsApp:</strong> <span id="clubWhatsapp"></span></p>
+  <p><strong>Instagram:</strong> <span id="clubInstagram"></span></p>
+</section>
+
+<section class="login-container">
+  <h2>Acceso Admin</h2>
+  <input type="password" id="adminPass" placeholder="Contraseña Admin">
+  <button onclick="loginAdmin()">Ingresar</button>
+</section>
+
+<section class="admin-container" style="display:none;">
+  <h2>Panel Admin</h2>
+  <p>¡Bienvenido, administrador!</p>
+  <button onclick="editarPerfil()">Editar Perfil</button>
+</section>
+
+<script>
+const API_URL = "/.netlify/functions/api";
+
+// Extraer username de la URL
+const pathParts = window.location.pathname.split("/").filter(p=>p);
+const username = pathParts[0]; // primer segmento
+
+let clubData = null;
+
+// Cargar datos del club
+async function cargarClub() {
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({action:"obtenerPerfilClub", username})
+    });
+    const data = await res.json();
+    if(data.status==='ok'){
+      clubData = data.perfil;
+      document.getElementById("clubNombre").innerText = clubData.NombreClub || username;
+      document.getElementById("clubDireccion").innerText = clubData.Dirección || '';
+      document.getElementById("clubTelefono").innerText = clubData.Teléfono || '';
+      document.getElementById("clubDescripcion").innerText = clubData.Descripción || '';
+      document.getElementById("clubWhatsapp").innerText = clubData.WhatsApp || '';
+      document.getElementById("clubInstagram").innerText = clubData.Instagram || '';
+    } else {
+      document.getElementById("clubNombre").innerText = "Club no encontrado";
+    }
+  } catch(err){
+    console.error(err);
+    document.getElementById("clubNombre").innerText = "Error al cargar club";
+  }
+}
+
+// Login Admin
+function loginAdmin(){
+  const pass = document.getElementById("adminPass").value;
+  if(!clubData){ alert("Datos no cargados"); return; }
+  if(pass===clubData.Password){
+    document.querySelector(".login-container").style.display="none";
+    document.querySelector(".admin-container").style.display="block";
+  } else {
+    alert("Contraseña incorrecta");
+  }
+}
+
+// Editar Perfil Admin
+function editarPerfil(){
+  alert("Aquí podés abrir el formulario de edición del club...");
+}
+
+// Cargar al inicio
+cargarClub();
+</script>
+
+</body>
+</html>
