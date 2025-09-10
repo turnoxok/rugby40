@@ -227,24 +227,27 @@ function cargarPerfil(){
 function guardarPerfil(){
   if(!loggedUsername) return;
   const perfil = {
-    username: loggedUsername,
-    nombreClub: document.getElementById("perfilNombre").value,
-    direccion: document.getElementById("perfilDireccion").value,
-    telefono: document.getElementById("perfilTelefono").value,
-    descripcion: document.getElementById("perfilDescripcion").value,
-    whatsapp: document.getElementById("perfilWhatsapp").value,
-    instagram: document.getElementById("perfilInstagram").value,
-    portada: document.getElementById("perfilPortada").value
-  };
+  username: loggedUsername,
+  NombreClub: document.getElementById("perfilNombre").value,
+  Dirección: document.getElementById("perfilDireccion").value,
+  Teléfono: document.getElementById("perfilTelefono").value,
+  Descripción: document.getElementById("perfilDescripcion").value,
+  WhatsApp: document.getElementById("perfilWhatsapp").value,
+  Instagram: document.getElementById("perfilInstagram").value,
+  Portada: document.getElementById("perfilPortada").value
+};
+
 
   fetch(API_URL, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({action:"actualizarPerfilClub", ...perfil})
-  }).then(r=>r.json()).then(data=>{
-    if(data.status==="ok") alert("Perfil guardado");
-    else alert("Error: "+data.msg);
-  });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ action: "actualizarPerfilClub", ...perfil })
+})
+.then(r => r.json())
+.then(data => {
+  if (data.status === "ok") alert("Perfil guardado");
+  else alert("Error: " + data.msg);
+});
 }
 </script>
 </body>
