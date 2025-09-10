@@ -1,6 +1,4 @@
 const fetch = require("node-fetch");
-
-// URL del Google Apps Script que guarda y lee datos de Clubs
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3-TFBkxd5bso4MHx0aa-lzR6EEjuqM5e7DZFcYetucj-_Bq_zdaY-2voJquBvY-Nv/exec";
 
 exports.handler = async function(event, context) {
@@ -17,31 +15,42 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const body = JSON.parse(event.body);
+    const body = JSON.parse(event.body || "{}");
 
-    // Reenvía el body al Apps Script
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
 
-    const data = await res.json();
+    const text = await res.text(); // 👈 primero leo como texto
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      // El Apps Script no devolvió JSON válido
+      return {
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({
+          status: "error",
+          message: "Respuesta no es JSON válido",
+          raw: text
+        })
+      };
+    }
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
+      headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify(data)
     };
 
   } catch (err) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
+      headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ status: "error", message: err.message })
     };
   }
