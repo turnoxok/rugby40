@@ -232,10 +232,11 @@ function guardarPerfil(){
     portada: document.getElementById('perfilPortada').value.trim()
   };
 
-  fetch('https://script.google.com/macros/s/AKfycby3-TFBkxd5bso4MHx0aa-lzR6EEjuqM5e7DZFcYetucj-_Bq_zdaY-2voJquBvY-Nv/exec',{
+  fetch('/.netlify/functions/registrarClub', {
   method:'POST',
   headers:{'Content-Type':'application/json'},
   body: JSON.stringify({action:'registrarClub', username, email, password:pass})
+
 
 
   }).then(r=>r.json()).then(data=>{
