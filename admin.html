@@ -66,20 +66,22 @@ function logout(){ loggedUsername=null; document.getElementById("dashboard").sty
 
 // Registrar
 function registrarClub(){
-  const username = document.getElementById("regUsername").value.trim();
-  const email = document.getElementById("regEmail").value.trim();
-  const pass = document.getElementById("regPass").value;
-  const pass2 = document.getElementById("regPass2").value;
-  if(!username||!email||!pass||!pass2){alert("Complete todos los campos");return;}
-  if(pass!==pass2){alert("Las contraseñas no coinciden");return;}
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
+  if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
 
-  fetch(API_URL, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({action:"registrarClub", username, email, password:pass})
+  fetch('/.netlify/functions/api', {   // 🔹 apuntamos a nuestra función Netlify
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({action:'registrarClub', username, email, password: pass})
   }).then(r=>r.json()).then(data=>{
-    if(data.status==="ok"){ alert("Cuenta creada!"); showLogin(); }
-    else alert("Error: "+data.msg);
+    if(data.status==='ok'){ alert('Cuenta creada! Ahora ingrese'); showLogin();}
+    else alert('Error: '+(data.msg || JSON.stringify(data)));
+  }).catch(err=>{
+    alert('Error fetch: '+err.message);
   });
 }
 
