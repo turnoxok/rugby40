@@ -100,7 +100,7 @@ body { display: flex; min-height: 100vh; background: #f5f6fa; }
       <h3>Perfil del Club</h3>
       <div class="form-group">
         <label>Usuario (username)</label>
-        <input type="text" id="perfilUsername">
+        <input type="text" id="perfilUsername" disabled>
       </div>
       <div class="form-group">
         <label>Nombre del Club</label>
@@ -136,6 +136,9 @@ body { display: flex; min-height: 100vh; background: #f5f6fa; }
 </div>
 
 <script>
+// 🔹 Proxy en Netlify
+const API_URL = "/.netlify/functions/api";
+
 let loggedUsername = null;
 
 function showRegister(){
@@ -158,7 +161,9 @@ function login(){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action:'loginClub', username, password:pass})
-  }).then(r=>r.json()).then(data=>{
+  })
+  .then(r=>r.json())
+  .then(data=>{
     if(data.status==='ok'){
       loggedUsername = username;
       document.getElementById('loginScreen').style.display='none';
@@ -190,11 +195,13 @@ function registrarClub(){
   if(!username||!email||!pass||!pass2){alert('Complete todos los campos');return;}
   if(pass!==pass2){alert('Las contraseñas no coinciden');return;}
 
-  fetch('https://script.google.com/macros/s/AKfycby3-TFBkxd5bso4MHx0aa-lzR6EEjuqM5e7DZFcYetucj-_Bq_zdaY-2voJquBvY-Nv/exec',{
+  fetch(API_URL,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action:'registrarClub', username, email, password:pass})
-  }).then(r=>r.json()).then(data=>{
+  })
+  .then(r=>r.json())
+  .then(data=>{
     if(data.status==='ok'){alert('Cuenta creada! Ahora ingrese'); showLogin();}
     else alert('Error: '+data.msg);
   });
@@ -205,25 +212,29 @@ function cargarPerfil(){
   fetch(API_URL, {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({action:'obtenerPerfil', username:loggedUsername})
-  }).then(r=>r.json()).then(data=>{
+    body: JSON.stringify({action:'obtenerPerfilClub', username:loggedUsername})
+  })
+  .then(r=>r.json())
+  .then(data=>{
     if(data.status==='ok'){
-      document.getElementById('perfilUsername').value=data.profile.username;
-      document.getElementById('perfilNombre').value=data.profile.nombre;
-      document.getElementById('perfilDireccion').value=data.profile.direccion;
-      document.getElementById('perfilTelefono').value=data.profile.telefono;
-      document.getElementById('perfilDescripcion').value=data.profile.descripcion;
-      document.getElementById('perfilWhatsapp').value=data.profile.whatsapp;
-      document.getElementById('perfilInstagram').value=data.profile.instagram;
-      document.getElementById('perfilPortada').value=data.profile.portada;
-    } else { alert('Error al cargar perfil'); }
+      const perfil = data.perfil;
+      document.getElementById('perfilUsername').value=perfil.username;
+      document.getElementById('perfilNombre').value=perfil.nombreClub;
+      document.getElementById('perfilDireccion').value=perfil.direccion;
+      document.getElementById('perfilTelefono').value=perfil.telefono;
+      document.getElementById('perfilDescripcion').value=perfil.descripcion;
+      document.getElementById('perfilWhatsapp').value=perfil.whatsapp;
+      document.getElementById('perfilInstagram').value=perfil.instagram;
+      document.getElementById('perfilPortada').value=perfil.portada;
+    } else { alert('Error al cargar perfil: '+data.msg); }
   });
 }
 
 function guardarPerfil(){
   const profile = {
-    username: document.getElementById('perfilUsername').value.trim(),
-    nombre: document.getElementById('perfilNombre').value.trim(),
+    action: 'actualizarPerfilClub',
+    username: loggedUsername,
+    nombreClub: document.getElementById('perfilNombre').value.trim(),
     direccion: document.getElementById('perfilDireccion').value.trim(),
     telefono: document.getElementById('perfilTelefono').value.trim(),
     descripcion: document.getElementById('perfilDescripcion').value.trim(),
@@ -232,15 +243,14 @@ function guardarPerfil(){
     portada: document.getElementById('perfilPortada').value.trim()
   };
 
-  fetch('/.netlify/functions/registrarClub', {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body: JSON.stringify({action:'registrarClub', username, email, password:pass})
-
-
-
-  }).then(r=>r.json()).then(data=>{
-    if(data.status==='ok'){ alert('Perfil guardado'); loggedUsername=profile.username;}
+  fetch(API_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(profile)
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.status==='ok'){ alert('Perfil actualizado'); }
     else alert('Error al guardar perfil: '+data.msg);
   });
 }
