@@ -253,13 +253,15 @@ async function cargarClub() {
         body: JSON.stringify({ action: "listarEventos" })
       });
       const partidos = await res2.json();
-      const partidosFiltrados = partidos.filter(p => p.clubOrganizador === username && p.EstadoInvitacion === "Aprobado");
-
+      const partidosFiltrados = partidos.filter(p => {
+  console.log(p.clubOrganizador, p.EstadoInvitacion); // 👈 para depurar
+  return p.clubOrganizador === username && p.EstadoInvitacion.toLowerCase() === "aprobado";
+});
       listaPartidos.innerHTML = "";
       if (partidosFiltrados.length === 0) {
         listaPartidos.innerHTML = "<p>No hay partidos activos.</p>";
       } else {
-        partidos.forEach(p => console.log(p)); // mira todos los objetos
+        partidosFiltrados.forEach(part => {
           const div = document.createElement("div");
           div.className = "partido-card";
           div.innerHTML = `
