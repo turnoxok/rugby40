@@ -147,7 +147,7 @@ section.visible { opacity:1; transform:translateY(0); }
 /* Admin form hidden by default */
 #profileContainer { display:none; margin:20px auto; max-width:800px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
 
-/* Loader pelota rugby */
+/* Loader general */
 #loader {
   position: fixed;
   top:0; left:0;
@@ -159,31 +159,21 @@ section.visible { opacity:1; transform:translateY(0); }
   z-index: 2000;
 }
 
-/* Pelota de rugby */
-.rugby-ball {
-  width: 80px;
-  height: 50px;
-  background: #fff;
-  border-radius: 50% / 50%; /* oval horizontal */
-  position: relative;
-  box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000; /* detalles negros */
-  transform: rotate(45deg);
-  animation: shine 1s infinite alternate;
+/* Spinner circular */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #ddd;
+  border-top: 6px solid #000; /* color del loader */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-/* Efecto de brillo pulsante */
-@keyframes shine {
-  0% {
-    box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000, 0 0 10px rgba(255,255,255,0.3);
-  }
-  50% {
-    box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000, 0 0 20px rgba(255,255,255,0.6);
-  }
-  100% {
-    box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000, 0 0 10px rgba(255,255,255,0.3);
-  }
+/* Animación de giro */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
-
 /* ---------------- Responsive ---------------- */
 @media(max-width:1024px){ .partido-card { flex:1 1 calc(50% - 20px); } }
 @media(max-width:768px){
@@ -198,7 +188,7 @@ section.visible { opacity:1; transform:translateY(0); }
 
 <!-- Loader -->
 <div id="loader">
-  <div class="rugby-ball"></div>
+  <div class="spinner"></div>
 </div>
 <!-- Navbar -->
 <nav class="navbar">
