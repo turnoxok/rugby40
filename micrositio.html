@@ -47,9 +47,8 @@ button:hover { background:#219150; }
 
 <script>
 const API_URL = "/.netlify/functions/api";
-
-const path = window.location.pathname;      // "/miclub"
-const username = path.substring(1);         // "miclub"
+const path = window.location.pathname;      // "/MiClub"
+const username = path.substring(1);         // "MiClub"
 
 const perfilNombre = document.getElementById("perfilNombre");
 const perfilDireccion = document.getElementById("perfilDireccion");
@@ -64,7 +63,7 @@ const loginBtn = document.getElementById("loginBtn");
 let loggedAsAdmin = false;
 
 // Cargar datos del club
-async function cargarClub(username) {
+async function cargarClub() {
   try {
     const res = await fetch(API_URL, {
       method:"POST",
@@ -81,9 +80,6 @@ async function cargarClub(username) {
       perfilWhatsapp.value = data.perfil.WhatsApp || "";
       perfilInstagram.value = data.perfil.Instagram || "";
       perfilPortada.value = data.perfil.Portada || "";
-
-      // Si no es admin, bloquear inputs
-      bloquearInputs();
     } else {
       clubName.textContent = "Club no encontrado";
     }
@@ -93,21 +89,22 @@ async function cargarClub(username) {
   }
 }
 
+// Bloquear inputs por defecto
 function bloquearInputs(){
-  perfilNombre.disabled = true;
-  perfilDireccion.disabled = true;
-  perfilTelefono.disabled = true;
-  perfilDescripcion.disabled = true;
-  perfilWhatsapp.disabled = true;
-  perfilInstagram.disabled = true;
-  perfilPortada.disabled = true;
+  [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion,
+   perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true);
 }
 
-// Login admin simple
+// Desbloquear inputs para admin
+function desbloquearInputs(){
+  [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion,
+   perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false);
+}
+
+// Login admin
 loginBtn.addEventListener("click", async ()=>{
   const pass = prompt("Ingrese contraseña de admin:");
   if(!pass) return;
-
   try{
     const res = await fetch(API_URL, {
       method:"POST",
@@ -128,17 +125,8 @@ loginBtn.addEventListener("click", async ()=>{
   }
 });
 
-function desbloquearInputs(){
-  perfilNombre.disabled = false;
-  perfilDireccion.disabled = false;
-  perfilTelefono.disabled = false;
-  perfilDescripcion.disabled = false;
-  perfilWhatsapp.disabled = false;
-  perfilInstagram.disabled = false;
-  perfilPortada.disabled = false;
-}
-
-cargarClub(username);
+bloquearInputs();
+cargarClub();
 </script>
 </body>
 </html>
