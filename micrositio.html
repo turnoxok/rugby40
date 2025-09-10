@@ -22,33 +22,34 @@ button:hover { background:#219150; }
 <div class="container" id="profileContainer">
   <h2>Perfil del Club</h2>
   <label>Nombre del Club</label>
-  <input type="text" id="perfilNombre" disabled>
-  
+  <input type="text" id="perfilNombre">
+
   <label>Dirección</label>
-  <input type="text" id="perfilDireccion" disabled>
+  <input type="text" id="perfilDireccion">
 
   <label>Teléfono</label>
-  <input type="text" id="perfilTelefono" disabled>
+  <input type="text" id="perfilTelefono">
 
   <label>Quiénes somos</label>
-  <textarea id="perfilDescripcion" rows="4" disabled></textarea>
+  <textarea id="perfilDescripcion" rows="4"></textarea>
 
   <label>WhatsApp</label>
-  <input type="text" id="perfilWhatsapp" disabled>
+  <input type="text" id="perfilWhatsapp">
 
   <label>Instagram</label>
-  <input type="text" id="perfilInstagram" disabled>
+  <input type="text" id="perfilInstagram">
 
   <label>Portada (URL)</label>
-  <input type="text" id="perfilPortada" disabled>
+  <input type="text" id="perfilPortada">
 
   <button id="loginBtn">Acceso Admin</button>
+  <button id="guardarBtn" style="margin-left:10px;">Guardar Perfil</button>
 </div>
 
 <script>
 const API_URL = "/.netlify/functions/api";
-const path = window.location.pathname;      // "/MiClub"
-const username = path.substring(1);         // "MiClub"
+const path = window.location.pathname;   // "/MiClub"
+const username = path.slice(1);          // "MiClub"
 
 const perfilNombre = document.getElementById("perfilNombre");
 const perfilDireccion = document.getElementById("perfilDireccion");
@@ -59,6 +60,7 @@ const perfilInstagram = document.getElementById("perfilInstagram");
 const perfilPortada = document.getElementById("perfilPortada");
 const clubName = document.getElementById("clubName");
 const loginBtn = document.getElementById("loginBtn");
+const guardarBtn = document.getElementById("guardarBtn");
 
 let loggedAsAdmin = false;
 
@@ -80,6 +82,7 @@ async function cargarClub() {
       perfilWhatsapp.value = data.perfil.WhatsApp || "";
       perfilInstagram.value = data.perfil.Instagram || "";
       perfilPortada.value = data.perfil.Portada || "";
+      bloquearInputs();
     } else {
       clubName.textContent = "Club no encontrado";
     }
@@ -89,22 +92,31 @@ async function cargarClub() {
   }
 }
 
-// Bloquear inputs por defecto
 function bloquearInputs(){
-  [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion,
-   perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true);
+  perfilNombre.disabled = true;
+  perfilDireccion.disabled = true;
+  perfilTelefono.disabled = true;
+  perfilDescripcion.disabled = true;
+  perfilWhatsapp.disabled = true;
+  perfilInstagram.disabled = true;
+  perfilPortada.disabled = true;
 }
 
-// Desbloquear inputs para admin
 function desbloquearInputs(){
-  [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion,
-   perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false);
+  perfilNombre.disabled = false;
+  perfilDireccion.disabled = false;
+  perfilTelefono.disabled = false;
+  perfilDescripcion.disabled = false;
+  perfilWhatsapp.disabled = false;
+  perfilInstagram.disabled = false;
+  perfilPortada.disabled = false;
 }
 
 // Login admin
 loginBtn.addEventListener("click", async ()=>{
   const pass = prompt("Ingrese contraseña de admin:");
   if(!pass) return;
+
   try{
     const res = await fetch(API_URL, {
       method:"POST",
@@ -125,7 +137,34 @@ loginBtn.addEventListener("click", async ()=>{
   }
 });
 
-bloquearInputs();
+// Guardar Perfil
+guardarBtn.addEventListener("click", async ()=>{
+  if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
+  const perfil = {
+    username,
+    NombreClub: perfilNombre.value,
+    Dirección: perfilDireccion.value,
+    Teléfono: perfilTelefono.value,
+    Descripción: perfilDescripcion.value,
+    WhatsApp: perfilWhatsapp.value,
+    Instagram: perfilInstagram.value,
+    Portada: perfilPortada.value
+  };
+
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({action:"actualizarPerfilClub", ...perfil})
+    });
+    const data = await res.json();
+    if(data.status==="ok") alert("Perfil guardado correctamente");
+    else alert("Error: "+data.msg);
+  } catch(err){
+    alert("Error al guardar: "+err.message);
+  }
+});
+
 cargarClub();
 </script>
 </body>
