@@ -1,6 +1,13 @@
 {
-  "name": "rugby40",
+  "name": "rugby40-functions",
   "version": "1.0.0",
+  "description": "Funciones serverless para Rugby40 en Netlify",
+  "main": "index.js",
+  "scripts": {
+    "start": "netlify dev",
+    "build": "echo 'No build step'",
+    "test": "echo \"No tests yet\""
+  },
   "dependencies": {
     "node-fetch": "^2.6.7"
   }
