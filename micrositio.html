@@ -210,17 +210,19 @@ function desbloquearInputs(){
   [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false);
 }
 
+
 // Cargar club
 async function cargarClub() {
-  try{
-    const res = await fetch(API_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"obtenerPerfilClub", username})
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "obtenerPerfilClub", username })
     });
     const data = await res.json();
-    console.log("Respuesta completa de API:", data); // 👈 LOG GENERAL
-    if(data.status==="ok"){
+    console.log("Respuesta completa de API:", data);
+
+    if (data.status === "ok") {
       const p = data.perfil;
       clubName.textContent = p.NombreClub || username;
       clubLogo.textContent = p.NombreClub || "Club Rugby";
@@ -235,53 +237,49 @@ async function cargarClub() {
       perfilPortada.value = p.Portada || "";
 
       // Links contacto
-      telLink.href = `tel:${p.Teléfono||""}`;
-      whatsappLink.href = `https://wa.me/${p.WhatsApp||""}`;
-      instagramLink.href = `https://instagram.com/${p.Instagram||""}`;
+      telLink.href = `tel:${p.Teléfono || ""}`;
+      whatsappLink.href = `https://wa.me/${p.WhatsApp || ""}`;
+      instagramLink.href = `https://instagram.com/${p.Instagram || ""}`;
 
       // Map
-      if(p.Dirección) mapa.src = `https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
+      if (p.Dirección) {
+        mapa.src = `https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
+      }
 
       // Partidos
-  async function cargarClub() {
-  try {
-    // ... código de fetch del perfil del club ...
-
-    // Partidos
-    const res2 = await fetch(API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ action:"listarEventos" })
-    });
-    const partidos = await res2.json();
-    const partidosFiltrados = partidos.filter(p => p.clubOrganizador === username && p.EstadoInvitacion === "Aprobado");
-
-    listaPartidos.innerHTML = "";
-    if(partidosFiltrados.length === 0){
-      listaPartidos.innerHTML = "<p>No hay partidos activos.</p>";
-    } else {
-      partidosFiltrados.forEach(part => {
-        const div = document.createElement("div");
-        div.className = "partido-card";
-        div.innerHTML = `
-          <img src="${part.imagen || 'https://via.placeholder.com/600x300'}" alt="Partido">
-          <div class="partido-info">
-            <h3>${part.clubOrganizador || 'Club'}</h3>
-            <p><strong>Fecha:</strong> ${part.fecha}</p>
-            <p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p>
-          </div>
-        `;
-        listaPartidos.appendChild(div);
+      const res2 = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "listarEventos" })
       });
+      const partidos = await res2.json();
+      const partidosFiltrados = partidos.filter(p => p.clubOrganizador === username && p.EstadoInvitacion === "Aprobado");
+
+      listaPartidos.innerHTML = "";
+      if (partidosFiltrados.length === 0) {
+        listaPartidos.innerHTML = "<p>No hay partidos activos.</p>";
+      } else {
+        partidosFiltrados.forEach(part => {
+          const div = document.createElement("div");
+          div.className = "partido-card";
+          div.innerHTML = `
+            <img src="${part.imagen || 'https://via.placeholder.com/600x300'}" alt="Partido">
+            <div class="partido-info">
+              <h3>${part.clubOrganizador || 'Club'}</h3>
+              <p><strong>Fecha:</strong> ${part.fecha}</p>
+              <p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p>
+            </div>
+          `;
+          listaPartidos.appendChild(div);
+        });
+      }
     }
-
-  } catch(err){
+  } catch (err) {
     console.error(err);
-    clubName.textContent="Error cargando club";
+    clubName.textContent = "Error cargando club";
   }
-} // <-- cierre final de la función
+}
 
- 
 
 // Login admin
 loginBtn.addEventListener("click", async ()=>{
