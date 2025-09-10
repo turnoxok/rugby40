@@ -23,13 +23,12 @@ exports.handler = async function(event, context) {
       body: JSON.stringify(body)
     });
 
-    const text = await res.text(); // 👈 primero leo como texto
+    const text = await res.text(); // Leer como texto primero
 
     let data;
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(text); // Intentar parsear JSON
     } catch (e) {
-      // El Apps Script no devolvió JSON válido
       return {
         statusCode: 500,
         headers: { "Access-Control-Allow-Origin": "*" },
