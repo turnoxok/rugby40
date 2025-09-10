@@ -3,179 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Club Rugby Veteranos</title>
+<title>Micrositio Club Rugby</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f6fa; }
-.header { position: relative; height: 200px; background:#2c3e50; color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; }
-.header img { width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1; }
-.header h1 { position:relative; z-index:2; font-size:2em; text-shadow: 1px 1px 5px rgba(0,0,0,0.7); }
-.container { max-width:800px; margin:20px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-label { font-weight:bold; display:block; margin-top:10px; }
-input, textarea { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:6px; }
-button { margin-top:15px; padding:10px 15px; border:none; background:#27ae60; color:#fff; border-radius:6px; cursor:pointer; }
-button:hover { background:#219150; }
+/* Reset & Fonts */
+* { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; scroll-behavior: smooth; }
+body { background:#f5f6fa; color:#333; }
+
+/* Navbar */
+.navbar { position:fixed; top:0; width:100%; background:rgba(255,255,255,0.95); display:flex; justify-content:space-between; align-items:center; padding:15px 20px; z-index:1000; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+.navbar .logo { font-weight:700; font-size:1.3em; color:#27ae60; }
+.navbar ul { list-style:none; display:flex; gap:20px; }
+.navbar ul li a { text-decoration:none; color:#333; font-weight:500; transition:0.3s; }
+.navbar ul li a:hover { color:#27ae60; }
+.hamburger { display:none; font-size:1.5em; cursor:pointer; }
+.navbar ul.mobile { display:none; flex-direction:column; position:absolute; top:60px; right:20px; background:#fff; border-radius:8px; padding:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); animation:fadeIn 0.3s; }
+
+/* Hero / Portada */
+.hero { position:relative; width:100%; max-height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.hero img { width:100%; height:auto; max-height:100vh; object-fit:cover; transition:0.5s; }
+.hero h1 { position:absolute; color:#fff; font-size:3em; text-shadow:2px 2px 8px rgba(0,0,0,0.7); text-align:center; }
+
+/* Sections */
+section { max-width:900px; margin:100px auto; padding:50px 20px; opacity:0; transform:translateY(50px); transition:all 0.8s ease; }
+section.visible { opacity:1; transform:translateY(0); }
+
+/* Quiénes somos */
+#quienesSomos img { width:100%; border-radius:8px; margin-top:20px; }
+
+/* Partidos */
+.partido { background:#fff; padding:15px; border-radius:8px; margin-bottom:15px; box-shadow:0 2px 6px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; transition:0.3s; }
+.partido:hover { transform:translateY(-3px); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+
+/* Contacto */
+.contacto { display:flex; gap:20px; font-size:1.2em; margin-top:20px; }
+.contacto a { color:#333; transition:0.3s; }
+.contacto a:hover { color:#27ae60; }
+
+/* Map */
+.map-container { margin-top:20px; width:100%; height:400px; border-radius:8px; overflow:hidden; }
+
+/* Botones / Links */
+button, .btn { background:#27ae60; color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; transition:0.3s; }
+button:hover, .btn:hover { background:#219150; }
+
+/* Animaciones */
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+/* Responsive */
+@media(max-width:768px){
+  .navbar ul { display:none; }
+  .hamburger { display:block; }
+  .navbar ul.mobile.show { display:flex; }
+  .hero h1 { font-size:2em; padding:0 20px; }
+}
 </style>
 </head>
 <body>
 
-<div class="header">
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="logo" id="clubLogo">Club Rugby</div>
+  <ul id="menu">
+    <li><a href="#quienesSomos">Quiénes Somos</a></li>
+    <li><a href="#portada">Portada</a></li>
+    <li><a href="#partidos">Próximos Partidos</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">&#9776;</div>
+  <ul class="mobile" id="mobileMenu"></ul>
+</nav>
+
+<!-- Hero / Portada -->
+<div class="hero" id="portada">
   <img id="portadaImg" src="" alt="Portada">
-  <h1 id="clubName">Cargando club...</h1>
+  <h1 id="clubName"></h1>
 </div>
 
-<div class="container" id="profileContainer">
-  <h2>Perfil del Club</h2>
-  <label>Nombre del Club</label>
-  <input type="text" id="perfilNombre">
+<!-- Quiénes somos -->
+<section id="quienesSomos">
+  <h2>Quiénes Somos</h2>
+  <p id="descripcionClub"></p>
+</section>
 
-  <label>Dirección</label>
-  <input type="text" id="perfilDireccion">
+<!-- Partidos -->
+<section id="partidos">
+  <h2>Próximos Partidos</h2>
+  <div id="listaPartidos"></div>
+</section>
 
-  <label>Teléfono</label>
-  <input type="text" id="perfilTelefono">
-
-  <label>Quiénes somos</label>
-  <textarea id="perfilDescripcion" rows="4"></textarea>
-
-  <label>WhatsApp</label>
-  <input type="text" id="perfilWhatsapp">
-
-  <label>Instagram</label>
-  <input type="text" id="perfilInstagram">
-
-  <label>Portada (URL)</label>
-  <input type="text" id="perfilPortada">
-
-  <button id="loginBtn">Acceso Admin</button>
-  <button id="guardarBtn" style="margin-left:10px;">Guardar Perfil</button>
-</div>
+<!-- Contacto -->
+<section id="contacto">
+  <h2>Contacto</h2>
+  <div class="contacto">
+    <a href="#" id="telLink"><i class="fas fa-phone"></i> Teléfono</a>
+    <a href="#" id="whatsappLink"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a href="#" id="instagramLink"><i class="fab fa-instagram"></i> Instagram</a>
+  </div>
+  <div class="map-container">
+    <iframe id="mapa" src="" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</section>
 
 <script>
 const API_URL = "/.netlify/functions/api";
-const path = window.location.pathname;   
-const username = path.slice(1);          
+const username = window.location.pathname.slice(1);
 
-const perfilNombre = document.getElementById("perfilNombre");
-const perfilDireccion = document.getElementById("perfilDireccion");
-const perfilTelefono = document.getElementById("perfilTelefono");
-const perfilDescripcion = document.getElementById("perfilDescripcion");
-const perfilWhatsapp = document.getElementById("perfilWhatsapp");
-const perfilInstagram = document.getElementById("perfilInstagram");
-const perfilPortada = document.getElementById("perfilPortada");
-const clubName = document.getElementById("clubName");
-const loginBtn = document.getElementById("loginBtn");
-const guardarBtn = document.getElementById("guardarBtn");
-const portadaImg = document.getElementById("portadaImg");
+// Navbar móvil
+const hamburger = document.getElementById("hamburger");
+const mobileMenu = document.getElementById("mobileMenu");
+hamburger.addEventListener("click", ()=>{ mobileMenu.classList.toggle("show"); });
 
-let loggedAsAdmin = false;
+// Scroll animación
+const sections = document.querySelectorAll("section");
+window.addEventListener("scroll", ()=>{ sections.forEach(sec=>{ if(sec.getBoundingClientRect().top < window.innerHeight-100) sec.classList.add("visible"); }); });
 
-// Cargar datos del club
-async function cargarClub() {
-  try {
-    const res = await fetch(API_URL, {
+// Cargar perfil
+async function cargarPerfil(){
+  try{
+    const res = await fetch(API_URL,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify({action:"obtenerPerfilClub", username})
     });
     const data = await res.json();
-    if(data.status==="ok") {
-      clubName.textContent = data.perfil.NombreClub || username;
-      perfilNombre.value = data.perfil.NombreClub || "";
-      perfilDireccion.value = data.perfil.Dirección || "";
-      perfilTelefono.value = data.perfil.Teléfono || "";
-      perfilDescripcion.value = data.perfil.Descripción || "";
-      perfilWhatsapp.value = data.perfil.WhatsApp || "";
-      perfilInstagram.value = data.perfil.Instagram || "";
-      perfilPortada.value = data.perfil.Portada || "";
-      portadaImg.src = data.perfil.Portada || "";
-      bloquearInputs();
-    } else {
-      clubName.textContent = "Club no encontrado";
-      portadaImg.style.display="none";
-    }
-  } catch(err){
-    console.error(err);
-    clubName.textContent = "Error cargando club";
-    portadaImg.style.display="none";
-  }
-}
-
-function bloquearInputs(){
-  perfilNombre.disabled = true;
-  perfilDireccion.disabled = true;
-  perfilTelefono.disabled = true;
-  perfilDescripcion.disabled = true;
-  perfilWhatsapp.disabled = true;
-  perfilInstagram.disabled = true;
-  perfilPortada.disabled = true;
-}
-
-function desbloquearInputs(){
-  perfilNombre.disabled = false;
-  perfilDireccion.disabled = false;
-  perfilTelefono.disabled = false;
-  perfilDescripcion.disabled = false;
-  perfilWhatsapp.disabled = false;
-  perfilInstagram.disabled = false;
-  perfilPortada.disabled = false;
-}
-
-// Login admin
-loginBtn.addEventListener("click", async ()=>{
-  const pass = prompt("Ingrese contraseña de admin:");
-  if(!pass) return;
-
-  try{
-    const res = await fetch(API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({action:"loginClub", username, password:pass})
-    });
-    const data = await res.json();
     if(data.status==="ok"){
-      alert("Bienvenido Admin");
-      desbloquearInputs();
-      loggedAsAdmin = true;
-    } else {
-      alert("Contraseña incorrecta");
+      const perfil = data.perfil;
+      document.getElementById("clubName").textContent = perfil.NombreClub || "";
+      document.getElementById("descripcionClub").textContent = perfil.Descripción || "";
+      document.getElementById("portadaImg").src = perfil.Portada || "";
+      document.getElementById("clubLogo").textContent = perfil.NombreClub || "Club Rugby";
+      // Contacto
+      document.getElementById("telLink").href = "tel:"+perfil.Teléfono;
+      document.getElementById("whatsappLink").href = "https://wa.me/"+perfil.WhatsApp.replace(/\D/g,'');
+      document.getElementById("instagramLink").href = perfil.Instagram;
+      // Mapa
+      const mapUrl = "https://www.google.com/maps?q="+encodeURIComponent(perfil.Dirección)+"&output=embed";
+      document.getElementById("mapa").src = mapUrl;
     }
-  } catch(err){
-    console.error(err);
-    alert("Error al loguear");
-  }
-});
+  } catch(err){ console.error(err); }
+}
 
-// Guardar Perfil
-guardarBtn.addEventListener("click", async ()=>{
-  if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
-  const perfil = {
-    username,
-    NombreClub: perfilNombre.value,
-    Dirección: perfilDireccion.value,
-    Teléfono: perfilTelefono.value,
-    Descripción: perfilDescripcion.value,
-    WhatsApp: perfilWhatsapp.value,
-    Instagram: perfilInstagram.value,
-    Portada: perfilPortada.value
-  };
-
-  try {
-    const res = await fetch(API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({action:"actualizarPerfilClub", ...perfil})
-    });
+// Cargar próximos partidos
+async function cargarPartidos(){
+  try{
+    const res = await fetch('/.netlify/functions/partidos', { method:'POST', body:JSON.stringify({action:'listarPartidos'}) });
     const data = await res.json();
-    if(data.status==="ok") {
-      alert("Perfil guardado correctamente");
-      portadaImg.src = perfil.Portada;
-    } else alert("Error: "+data.msg);
-  } catch(err){
-    alert("Error al guardar: "+err.message);
-  }
-});
+    const lista = document.getElementById("listaPartidos");
+    lista.innerHTML="";
+    if(data.status==="ok" && data.partidos){
+      data.partidos.forEach(p=>{
+        const div = document.createElement("div");
+        div.className="partido";
+        div.innerHTML=`<span>${p.rival} - ${p.fecha}</span><span>${p.lugar}</span>`;
+        lista.appendChild(div);
+      });
+    } else { lista.innerHTML="<p>No hay partidos activos.</p>"; }
+  } catch(err){ console.error(err); }
+}
 
-cargarClub();
+cargarPerfil();
+cargarPartidos();
 </script>
+
 </body>
 </html>
+
+
+
