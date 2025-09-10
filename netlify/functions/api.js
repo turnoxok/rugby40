@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3-TFBkxd5bso4MHx0aa-lzR6EEjuqM5e7DZFcYetucj-_Bq_zdaY-2voJquBvY-Nv/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOtMf2865kYSQ-0kuUBkKqk9zA08TNcoW9KQTjVa7cTwFR0hpCyPqrkgh6FjjzSFAo/exec";
 
 exports.handler = async function(event, context) {
   if (event.httpMethod === "OPTIONS") {
