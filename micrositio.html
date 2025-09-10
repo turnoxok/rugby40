@@ -255,7 +255,7 @@ async function cargarClub() {
       const partidos = await res2.json();
       const partidosFiltrados = partidos.filter(p => {
   console.log(p.clubOrganizador, p.EstadoInvitacion); // 👈 para depurar
-  return p.clubOrganizador === username && p.EstadoInvitacion.toLowerCase() === "aprobado";
+  return p.clubOrganizador === username && p.EstadoInvitacion.toLowerCase() === "Aceptado";
 });
       listaPartidos.innerHTML = "";
       if (partidosFiltrados.length === 0) {
