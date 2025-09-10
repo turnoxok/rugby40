@@ -185,25 +185,23 @@ section.visible { opacity:1; transform:translateY(0); }
   .partido-card { flex:1 1 100%; }
 }
   /* Animación palabra por palabra */
-/* Contenedor de texto animado */
 #quienesSomos p {
-  display: flex;
-  flex-wrap: wrap;        /* permite que las palabras bajen de línea */
-  justify-content: flex-start; /* alineado normal, o center si querés */
   max-width: 800px;
   margin: 0 auto;
   line-height: 1.6;
   padding: 0 10px;
   font-size: 1.1em;
+  text-align: justify;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Animación palabra por palabra */
 .fade-word {
+  display: inline-block;    /* necesario para animación */
   opacity: 0;
-  display: inline-block;  /* necesario para transform */
-  margin-right: 0.25em;   /* espacio entre palabras */
   transform: translateY(15px);
   transition: all 0.4s ease;
+  margin-right: 0.25em;     /* espacio entre palabras */
 }
 
 .fade-word.visible {
