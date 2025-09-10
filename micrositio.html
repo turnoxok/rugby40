@@ -286,6 +286,17 @@ const mapa = document.getElementById("mapa");
 const listaPartidos = document.getElementById("listaPartidos");
 const loader = document.getElementById("loader");
 
+  // Llenar menú móvil
+const menuItems = document.querySelectorAll(".menu-items li a");
+menuItems.forEach(a => {
+  const li = document.createElement("li");
+  const link = document.createElement("a");
+  link.href = a.href;
+  link.textContent = a.textContent;
+  li.appendChild(link);
+  mobileMenu.appendChild(li);
+});
+  
 // Navbar móvil
 const hamburger = document.getElementById("hamburger");
 const mobileMenu = document.getElementById("mobileMenu");
