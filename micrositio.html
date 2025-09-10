@@ -184,6 +184,19 @@ section.visible { opacity:1; transform:translateY(0); }
   .hero h1 { font-size:2em; }
   .partido-card { flex:1 1 100%; }
 }
+  /* Animación palabra por palabra */
+.fade-word {
+  opacity: 0;
+  transform: translateY(15px);
+  display: inline-block;
+  transition: all 0.4s ease;
+}
+
+.fade-word.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 </style>
 </head>
 <body>
@@ -407,6 +420,43 @@ window.addEventListener("scroll", ()=>{
 
 
 cargarClub();
+</script>
+  <script>
+  function animarQuienesSomos() {
+  const h2 = document.querySelector("#quienesSomos h2");
+  const p = document.getElementById("descripcionClub");
+
+  // Dividir el h2 en palabras
+  if (h2 && !h2.dataset.split) {
+    h2.dataset.split = true;
+    const palabras = h2.innerText.split(" ");
+    h2.innerHTML = palabras.map(word => `<span class="fade-word">${word}</span>`).join(" ");
+  }
+
+  // Dividir el párrafo en palabras
+  if (p && !p.dataset.split) {
+    p.dataset.split = true;
+    const palabras = p.innerText.split(" ");
+    p.innerHTML = palabras.map(word => `<span class="fade-word">${word}</span>`).join(" ");
+  }
+
+  // Animar cuando el section entra en pantalla
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const words = entry.target.querySelectorAll(".fade-word");
+        words.forEach((word, i) => {
+          setTimeout(() => word.classList.add("visible"), i * 100); // delay entre palabras
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(document.getElementById("quienesSomos"));
+}
+
+document.addEventListener("DOMContentLoaded", animarQuienesSomos);
 </script>
 </body>
 </html>
