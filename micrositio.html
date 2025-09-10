@@ -259,7 +259,7 @@ async function cargarClub() {
       if (partidosFiltrados.length === 0) {
         listaPartidos.innerHTML = "<p>No hay partidos activos.</p>";
       } else {
-        partidosFiltrados.forEach(part => {
+        partidos.forEach(p => console.log(p)); // mira todos los objetos
           const div = document.createElement("div");
           div.className = "partido-card";
           div.innerHTML = `
