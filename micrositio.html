@@ -95,6 +95,25 @@ section.visible { opacity:1; transform:translateY(0); }
 
 /* Quiénes somos */
 #quienesSomos img { width:100%; border-radius:8px; margin-top:20px; max-width: 500px;}
+/* Quiénes somos - textos ajustados */
+#quienesSomos p {
+  max-width: 800px;        /* ancho máximo para no estirarse demasiado */
+  margin: 0 auto;           /* centrado horizontal */
+  line-height: 1.6;         /* mejorar lectura */
+  word-wrap: break-word;    /* cortar palabras muy largas */
+  overflow-wrap: break-word;/* compatibilidad */
+  padding: 0 10px;          /* espacio lateral en pantallas pequeñas */
+  font-size: 1.1em;         /* opcional, un poco más grande para lectura */
+  text-align: justify;       /* opcional, para un bloque más limpio */
+}
+
+/* Ajustes responsive */
+@media(max-width:768px){
+  #quienesSomos p {
+    font-size: 1em;
+    padding: 0 15px;
+  }
+}
 
 /* Partidos */
 #listaPartidos { display:flex; flex-wrap:wrap; gap:20px; }
