@@ -286,7 +286,11 @@ const mapa = document.getElementById("mapa");
 const listaPartidos = document.getElementById("listaPartidos");
 const loader = document.getElementById("loader");
 
-  // Llenar menú móvil
+ // Navbar móvil
+const hamburger = document.getElementById("hamburger");
+const mobileMenu = document.getElementById("mobileMenu");
+
+// Llenar menú móvil
 const menuItems = document.querySelectorAll(".menu-items li a");
 menuItems.forEach(a => {
   const li = document.createElement("li");
@@ -296,11 +300,11 @@ menuItems.forEach(a => {
   li.appendChild(link);
   mobileMenu.appendChild(li);
 });
-  
-// Navbar móvil
-const hamburger = document.getElementById("hamburger");
-const mobileMenu = document.getElementById("mobileMenu");
-hamburger.addEventListener("click", ()=>{ mobileMenu.classList.toggle("show"); });
+
+// Toggle menú móvil
+hamburger.addEventListener("click", ()=>{ 
+  mobileMenu.classList.toggle("show"); 
+});
 
 // Bloquear inputs
 let loggedAsAdmin = false;
