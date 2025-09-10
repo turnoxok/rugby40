@@ -241,7 +241,8 @@ async function cargarClub() {
       if(p.Dirección) mapa.src = `https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
 
       // Partidos
-      if(data.partidos){
+if(data.partidos){
+  console.log("Partidos recibidos:", data.partidos); // 👈 Agregá esto
   listaPartidos.innerHTML="";
   data.partidos.forEach(part=>{
     const div = document.createElement("div");
@@ -259,6 +260,7 @@ async function cargarClub() {
 } else {
   listaPartidos.innerHTML="<p>No hay partidos activos.</p>";
 }
+
 
 
 // Login admin
