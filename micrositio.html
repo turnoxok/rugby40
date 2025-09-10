@@ -55,25 +55,25 @@ body { background:#fff; color:#000; }
 .hero {
   position: relative;
   width: 100%;
-  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #000; /* fondo negro detrás */
+  background: #000; /* de relleno */
 }
 
 .hero img {
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 50%;
-  transform: translateX(-50%); /* centrar horizontal */
+  transform: translateX(-50%);
   width: 100%;
   height: 100%;
-  object-fit: contain;  /* siempre mostrar la imagen completa */
+  object-fit: contain;   /* mostrar imagen completa */
   object-position: center;
   transition: transform 0.5s ease-out;
 }
+
 .hero h1 {
   position:relative;
   z-index:1;
@@ -383,9 +383,26 @@ guardarBtn.addEventListener("click", async ()=>{
 const sections = document.querySelectorAll("section");
 window.addEventListener("scroll", ()=>{ sections.forEach(sec=>{ if(sec.getBoundingClientRect().top<window.innerHeight-100) sec.classList.add("visible"); }); });
 
+
+  function ajustarHero() {
+  if (!portadaImg.complete || portadaImg.naturalWidth === 0) return;
+
+  const imgRatio = portadaImg.naturalHeight / portadaImg.naturalWidth;
+  const screenWidth = window.innerWidth;
+  const newHeight = screenWidth * imgRatio;
+
+  document.querySelector(".hero").style.height = newHeight + "px";
+}
+
+// Cuando carga la imagen
+portadaImg.addEventListener("load", ajustarHero);
+// También al redimensionar la ventana
+window.addEventListener("resize", ajustarHero);
+
 // ---------------- Parallax ----------------
 window.addEventListener("scroll", ()=>{ 
-  portadaImg.style.transform = `translateY(${window.scrollY*0.3}px) translateX(-50%)`; 
+  portadaImg.style.transform = 
+    `translateY(${window.scrollY*0.3}px) translateX(-50%)`; 
 });
 
 
