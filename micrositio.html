@@ -254,8 +254,8 @@ async function cargarClub() {
       });
       const partidos = await res2.json();
       const partidosFiltrados = partidos.filter(p => {
-  console.log(p.clubOrganizador, p.EstadoInvitacion); // 👈 para depurar
-  return p.clubOrganizador === username && p.EstadoInvitacion.toLowerCase() === "Aceptado";
+  console.log(p.cluborganizador, p.EstadoInvitacion); // 👈 para depurar
+  return p.cluborganizadorr === username && p.EstadoInvitacion.toLowerCase() === "Aceptado";
 });
       listaPartidos.innerHTML = "";
       if (partidosFiltrados.length === 0) {
@@ -267,7 +267,7 @@ async function cargarClub() {
           div.innerHTML = `
             <img src="${part.imagen || 'https://via.placeholder.com/600x300'}" alt="Partido">
             <div class="partido-info">
-              <h3>${part.clubOrganizador || 'Club'}</h3>
+              <h3>${part.cluborganizador || 'Club'}</h3>
               <p><strong>Fecha:</strong> ${part.fecha}</p>
               <p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p>
             </div>
