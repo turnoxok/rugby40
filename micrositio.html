@@ -135,13 +135,25 @@ section.visible { opacity:1; transform:translateY(0); }
   background:rgba(255,255,255,0.8);
   z-index:2000;
 }
-.loader-ball {
-  width:50px; height:50px;
+.loader-rugby {
+  width:50px; height:30px;
   background:#000;
-  border-radius:50%;
-  animation: bounce 0.6s infinite alternate;
+  border-radius:50% / 50%; /* oval horizontal */
+  transform: rotate(60deg);
+  animation: rugby-bounce 0.6s infinite alternate, rugby-rotate 0.6s infinite alternate;
 }
-@keyframes bounce { 0%{transform:translateY(0);} 100%{transform:translateY(-50px);} }
+
+/* Rebote vertical */
+@keyframes rugby-bounce {
+  0% { transform: translateY(0) rotate(60deg); }
+  100% { transform: translateY(-50px) rotate(60deg); }
+}
+
+/* Pequeño balanceo de rotación para más realismo */
+@keyframes rugby-rotate {
+  0% { transform: translateY(0) rotate(55deg); }
+  100% { transform: translateY(-50px) rotate(65deg); }
+}
 
 /* ---------------- Responsive ---------------- */
 @media(max-width:1024px){ .partido-card { flex:1 1 calc(50% - 20px); } }
