@@ -11,7 +11,8 @@ section { max-width:800px; margin:20px auto; padding:20px; background:#fff; bord
 h1,h2 { color:#2c3e50; }
 button { background:#27ae60; color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; }
 button:hover { background:#219150; }
-.login-container, .admin-container { margin-top:20px; }
+.login-container, .admin-container, .jugador-container { margin-top:20px; }
+input { padding:8px; width:100%; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
 </style>
 </head>
 <body>
@@ -29,6 +30,7 @@ button:hover { background:#219150; }
   <p><strong>Instagram:</strong> <span id="clubInstagram"></span></p>
 </section>
 
+<!-- LOGIN ADMIN -->
 <section class="login-container">
   <h2>Acceso Admin</h2>
   <input type="password" id="adminPass" placeholder="Contraseña Admin">
@@ -41,13 +43,18 @@ button:hover { background:#219150; }
   <button onclick="editarPerfil()">Editar Perfil</button>
 </section>
 
+<!-- LOGIN JUGADOR -->
+<section class="jugador-container">
+  <h2>Acceso Jugador</h2>
+  <input type="text" id="jugadorDNI" placeholder="DNI">
+  <input type="password" id="jugadorPass" placeholder="Contraseña">
+  <button onclick="loginJugador()">Ingresar</button>
+</section>
+
 <script>
 const API_URL = "/.netlify/functions/api";
-
-// Extraer username de la URL
 const pathParts = window.location.pathname.split("/").filter(p=>p);
-const username = pathParts[0]; // primer segmento
-
+const username = pathParts[0]; // primer segmento de URL
 let clubData = null;
 
 // Cargar datos del club
@@ -93,7 +100,33 @@ function editarPerfil(){
   alert("Aquí podés abrir el formulario de edición del club...");
 }
 
-// Cargar al inicio
+// Login Jugador
+async function loginJugador(){
+  const dni = document.getElementById("jugadorDNI").value;
+  const pass = document.getElementById("jugadorPass").value;
+  if(!dni || !pass){ alert("Ingrese DNI y contraseña"); return; }
+
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({action:"loginJugador", dni, password:pass})
+    });
+    const data = await res.json();
+    if(data.status==='ok'){
+      // Redirigir a perfil.html con club y dni
+      const params = new URLSearchParams({club: username, dni});
+      window.location.href = `perfil.html?${params.toString()}`;
+    } else {
+      alert("Error: "+data.msg);
+    }
+  } catch(err){
+    console.error(err);
+    alert("Error de login jugador");
+  }
+}
+
+// Iniciar
 cargarClub();
 </script>
 
