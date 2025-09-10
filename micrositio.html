@@ -130,29 +130,39 @@ section.visible { opacity:1; transform:translateY(0); }
 
 /* Loader pelota rugby */
 #loader {
-  position:fixed; top:0; left:0; width:100%; height:100%;
-  display:flex; justify-content:center; align-items:center;
-  background:rgba(255,255,255,0.8);
-  z-index:2000;
-}
-.loader-rugby {
-  width:50px; height:30px;
-  background:#000;
-  border-radius:50% / 50%; /* oval horizontal */
-  transform: rotate(60deg);
-  animation: rugby-bounce 0.6s infinite alternate, rugby-rotate 0.6s infinite alternate;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: rgba(255,255,255,0.9);
+  z-index: 2000;
 }
 
-/* Rebote vertical */
-@keyframes rugby-bounce {
-  0% { transform: translateY(0) rotate(60deg); }
-  100% { transform: translateY(-50px) rotate(60deg); }
+/* Pelota de rugby */
+.rugby-ball {
+  width: 80px;
+  height: 50px;
+  background: #fff;
+  border-radius: 50% / 50%; /* oval horizontal */
+  position: relative;
+  box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000; /* detalles negros */
+  transform: rotate(45deg);
+  animation: shine 1s infinite alternate;
 }
 
-/* Pequeño balanceo de rotación para más realismo */
-@keyframes rugby-rotate {
-  0% { transform: translateY(0) rotate(55deg); }
-  100% { transform: translateY(-50px) rotate(65deg); }
+/* Efecto de brillo pulsante */
+@keyframes shine {
+  0% {
+    box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000, 0 0 10px rgba(255,255,255,0.3);
+  }
+  50% {
+    box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000, 0 0 20px rgba(255,255,255,0.6);
+  }
+  100% {
+    box-shadow: inset -10px 0 0 0 #000, inset 10px 0 0 0 #000, 0 0 10px rgba(255,255,255,0.3);
+  }
 }
 
 /* ---------------- Responsive ---------------- */
@@ -169,7 +179,7 @@ section.visible { opacity:1; transform:translateY(0); }
 
 <!-- Loader -->
 <div id="loader">
-  <div class="loader-rugby"></div>
+  <div class="rugby-ball"></div>
 </div>
 <!-- Navbar -->
 <nav class="navbar">
