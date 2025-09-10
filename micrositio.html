@@ -327,6 +327,9 @@ async function cargarClub() {
      
       clubLogo.textContent=p.NombreClub||"Club Rugby";
       descripcionClub.textContent=p.Descripción||"";
+                           // inicializar animación después de cargar la descripción
+setupQuienesSomosAnimation();
+
       portadaImg.src=p.Portada||"";
       perfilNombre.value=p.NombreClub||"";
       perfilDireccion.value=p.Dirección||"";
@@ -418,46 +421,55 @@ window.addEventListener("scroll", ()=>{
     `translateY(${window.scrollY*0.3}px) translateX(-50%)`; 
 });
 
-
-cargarClub();
-</script>
-  <script>
-  function animarQuienesSomos() {
+function setupQuienesSomosAnimation() {
   const h2 = document.querySelector("#quienesSomos h2");
   const p = document.getElementById("descripcionClub");
 
-  // Dividir el h2 en palabras
-  if (h2 && !h2.dataset.split) {
-    h2.dataset.split = true;
-    const palabras = h2.innerText.split(" ");
-    h2.innerHTML = palabras.map(word => `<span class="fade-word">${word}</span>`).join(" ");
+  function splitElementTextToWords(el) {
+    if (!el || el.dataset.split) return false;
+    const text = el.innerText.trim();
+    if (!text) return false;
+    el.dataset.split = true;
+    const palabras = text.split(/\s+/);
+    el.innerHTML = palabras.map(word => `<span class="fade-word">${word}</span>`).join(" ");
+    return true;
   }
 
-  // Dividir el párrafo en palabras
-  if (p && !p.dataset.split) {
-    p.dataset.split = true;
-    const palabras = p.innerText.split(" ");
-    p.innerHTML = palabras.map(word => `<span class="fade-word">${word}</span>`).join(" ");
-  }
+  // split del h2 (normalmente ya tiene texto)
+  splitElementTextToWords(h2);
 
-  // Animar cuando el section entra en pantalla
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const words = entry.target.querySelectorAll(".fade-word");
-        words.forEach((word, i) => {
-          setTimeout(() => word.classList.add("visible"), i * 100); // delay entre palabras
-        });
-        observer.unobserve(entry.target);
+  // Intentamos splitear el párrafo; si está vacío, observamos hasta que tenga contenido
+  if (splitElementTextToWords(p)) {
+    startIntersection();
+  } else {
+    // Si el párrafo está vacío (porque aún no llegó la API), lo observamos
+    const mo = new MutationObserver((mutations, obs) => {
+      if (splitElementTextToWords(p)) {
+        obs.disconnect();
+        startIntersection();
       }
     });
-  }, { threshold: 0.3 });
+    mo.observe(p, { childList: true, subtree: true, characterData: true });
+  }
 
-  observer.observe(document.getElementById("quienesSomos"));
+  function startIntersection() {
+    const section = document.getElementById("quienesSomos");
+    if (!section) return;
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const words = section.querySelectorAll(".fade-word");
+          words.forEach((word, i) => setTimeout(() => word.classList.add("visible"), i * 100));
+          observer.unobserve(section);
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(section);
+  }
 }
-
-document.addEventListener("DOMContentLoaded", animarQuienesSomos);
+cargarClub();
 </script>
+
 </body>
 </html>
 
