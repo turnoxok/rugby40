@@ -175,18 +175,16 @@ section.visible { opacity:1; transform:translateY(0); }
 /* Spinner circular */
 .spinner {
   width: 60px;
-  height: 60px;
-  border: 6px solid #ddd;
-  border-top: 6px solid #000;
-  border-radius: 50%;
+  height: 36px; /* ovalado */
+  border-radius: 50% / 50%;
+  background: linear-gradient(45deg, #fff, #a0c4ff);
+  transform: rotate(60deg);
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg) rotateX(0deg); }
+  100% { transform: rotate(360deg) rotateX(0deg); }
 }
-
 /* ---------------- Responsive ---------------- */
 @media(max-width:1024px){ .partido-card { flex:1 1 calc(50% - 20px); } }
 @media(max-width:768px){
