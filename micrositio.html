@@ -339,11 +339,11 @@ section.visible { opacity:1; transform:translateY(0); }
     <span id="cerrarModal" style="position:absolute; top:10px; right:15px; font-size:1.5em; cursor:pointer;">&times;</span>
   </div>
 </div>
-<script>
+
+  <script>
 // ---------------- Elementos ----------------
 const API_URL = "/.netlify/functions/api";
-const path = window.location.pathname;
-const username = path.slice(1);
+const username = window.location.pathname.slice(1);
 
 const perfilNombre = document.getElementById("perfilNombre");
 const perfilDireccion = document.getElementById("perfilDireccion");
@@ -368,21 +368,19 @@ const loader = document.getElementById("loader");
 const hamburger = document.getElementById("hamburger");
 const mobileMenu = document.getElementById("mobileMenu");
 
-// Modal Login
 const modalLogin = document.getElementById("modalLogin");
 const inputAdminPass = document.getElementById("inputAdminPass");
 const btnIngresarAdmin = document.getElementById("btnIngresarAdmin");
 const btnRecuperarPass = document.getElementById("btnRecuperarPass");
 const cerrarModal = document.getElementById("cerrarModal");
 
-// Modal Perfil
 const profileModal = document.getElementById("profileModal");
 const closeModal = document.getElementById("closeModal");
 const modalLoader = document.getElementById("modalLoader");
 
 let loggedAsAdmin = false;
 
-// ---------------- Funciones útiles ----------------
+// ---------------- Funciones ----------------
 function bloquearInputs(){ 
   [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true); 
 }
@@ -390,31 +388,34 @@ function desbloquearInputs(){
   [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false); 
 }
 
-// ---------------- Menú móvil ----------------
-const menuItems = document.querySelectorAll(".menu-items li a");
-menuItems.forEach(a => {
-  const li = document.createElement("li");
-  const link = document.createElement("a");
-  link.href = a.href;
-  link.textContent = a.textContent;
-  li.appendChild(link);
-  mobileMenu.appendChild(li);
-});
-hamburger.addEventListener("click", ()=>{ mobileMenu.classList.toggle("show"); });
-mobileMenu.querySelectorAll("a").forEach(link => link.addEventListener("click", () => mobileMenu.classList.remove("show")));
+function animarTexto(element){
+  const text = element.innerText.trim();
+  element.innerHTML = text.split(' ').map(w=>`<span class="fade-word">${w}</span>`).join(' ');
+  element.querySelectorAll('.fade-word').forEach((word,i)=>setTimeout(()=>word.classList.add('visible'), i*100));
+}
 
-// ---------------- Cargar Club ----------------
-async function cargarClub() {
-  loader.style.display = "flex";
+function ajustarHero() {
+  if (!portadaImg.complete || portadaImg.naturalWidth === 0) return;
+  const imgRatio = portadaImg.naturalHeight / portadaImg.naturalWidth;
+  document.querySelector(".hero").style.height = (window.innerWidth * imgRatio) + "px";
+}
+
+// ---------------- Menú móvil ----------------
+hamburger.addEventListener("click", ()=> mobileMenu.classList.toggle("show"));
+mobileMenu.querySelectorAll("a").forEach(link => link.addEventListener("click", ()=> mobileMenu.classList.remove("show")));
+
+// ---------------- Cargar Perfil y Partidos ----------------
+async function cargarClub(){
+  loader.style.display="flex";
   try {
-    const res = await fetch(API_URL, { 
-      method:"POST", 
-      headers:{"Content-Type":"application/json"}, 
-      body:JSON.stringify({ action:"obtenerPerfilClub", username }) 
-    });
-    const data = await res.json();
-    if(data.status==="ok"){ 
-      const p=data.perfil;
+    const [resPerfil, resPartidos] = await Promise.all([
+      fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"obtenerPerfilClub", username }) }),
+      fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"listarEventos" }) })
+    ]);
+
+    const dataPerfil = await resPerfil.json();
+    if(dataPerfil.status==="ok"){
+      const p=dataPerfil.perfil;
       clubLogo.textContent = p.NombreClub || "Club Rugby";
       descripcionClub.textContent = p.Descripción || "";
       animarTexto(descripcionClub);
@@ -427,59 +428,55 @@ async function cargarClub() {
       perfilWhatsapp.value = p.WhatsApp || "";
       perfilInstagram.value = p.Instagram || "";
       perfilPortada.value = p.Portada || "";
+
       telLink.href = `tel:${p.Teléfono||""}`;
       whatsappLink.href = `https://wa.me/${p.WhatsApp||""}`;
       instagramLink.href = `https://instagram.com/${p.Instagram||""}`;
       if(p.Dirección) mapa.src=`https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
     }
 
-    // ---------------- Cargar Partidos ----------------
-    const res2 = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"listarEventos" }) });
-    const rawPartidos = await res2.json();
-    function normalizePartido(raw){
+    // ---------------- Filtrar y mostrar partidos ----------------
+    const rawPartidos = await resPartidos.json();
+    const hoy = new Date();
+    const partidosNorm = rawPartidos.map(raw=>{
       const ev={};
       for(const k in raw){ if(!raw.hasOwnProperty(k)) continue;
-        const nk=k.toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'');
+        const nk=k.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'');
         ev[nk]=raw[k];
       }
       return { id:ev.id||ev.idevento||ev.id, cluborganizador:ev.cluborganizador||'', estadoinvitacion:ev.estadoinvitacion||ev.estado||'', fecha:ev.fecha||'', lugar:ev.lugar||'', imagen:ev.imagen||'', _raw:raw };
-    }
-    const hoy=new Date();
-    const partidosNorm=rawPartidos.map(normalizePartido);
-    const partidosFiltrados=partidosNorm.filter(p=>{ 
-      const estado=(p.estadoinvitacion||'').toLowerCase(); 
-      const fechaEvento=p.fecha?new Date(p.fecha):null; 
-      return estado==='aceptado' && (!fechaEvento||fechaEvento>=hoy); 
     });
-    listaPartidos.innerHTML='';
-    if(partidosFiltrados.length===0){ listaPartidos.innerHTML="<p>No hay partidos activos.</p>"; }
-    else{
-      partidosFiltrados.forEach(part=>{
-        const div=document.createElement("div");
-        div.className="partido-card";
-        div.innerHTML=`
+    const partidosFiltrados = partidosNorm.filter(p=>{
+      const estado = (p.estadoinvitacion||'').toLowerCase();
+      const fechaEvento = p.fecha ? new Date(p.fecha) : null;
+      return estado==='aceptado' && (!fechaEvento||fechaEvento>=hoy);
+    });
+
+    listaPartidos.innerHTML = partidosFiltrados.length === 0 ? "<p>No hay partidos activos.</p>" :
+      partidosFiltrados.map(part=>`
+        <div class="partido-card">
           <img src="${part.imagen||'https://via.placeholder.com/600x300'}" alt="Partido">
           <div class="partido-info">
             <h3>${part.cluborganizador||'Club'}</h3>
             <p><strong>Fecha:</strong> ${part.fecha}</p>
             <p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p>
           </div>
-        `;
-        listaPartidos.appendChild(div);
-      });
-    }
+        </div>
+      `).join('');
+
   } catch(err){ 
-    console.error("Error:",err); 
-    listaPartidos.innerHTML="<p>Error al cargar partidos.</p>"; 
+    console.error(err);
+    listaPartidos.innerHTML="<p>Error al cargar club o partidos.</p>";
   } finally{ loader.style.display="none"; }
 }
 
 // ---------------- Login Admin ----------------
-loginBtn.addEventListener("click", ()=>{ modalLogin.style.display="flex"; });
-cerrarModal.addEventListener("click", ()=>{ modalLogin.style.display="none"; });
+loginBtn.addEventListener("click", ()=> modalLogin.style.display="flex");
+cerrarModal.addEventListener("click", ()=> modalLogin.style.display="none");
+closeModal.addEventListener("click", ()=> profileModal.style.display="none");
+
 btnIngresarAdmin.addEventListener("click", async ()=>{
-  const pass = inputAdminPass.value;
-  if(!pass) return;
+  const pass = inputAdminPass.value; if(!pass) return;
   try{
     const res = await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"loginClub", username, password:pass}) });
     const data = await res.json();
@@ -490,15 +487,11 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
       profileModal.style.display = "flex";
       guardarBtn.style.display = "inline-block";
       modalLogin.style.display = "none";
-    } else {
-      alert("Contraseña incorrecta");
-    }
-  }catch(err){ console.error(err); alert("Error al loguear"); }
+    } else alert("Contraseña incorrecta");
+  } catch(err){ console.error(err); alert("Error al loguear"); }
 });
-btnRecuperarPass.addEventListener("click", ()=>{ alert("Se enviará un correo de recuperación (simulado)."); });
 
-// Cerrar modal de perfil
-closeModal.addEventListener("click", ()=>{ profileModal.style.display="none"; });
+btnRecuperarPass.addEventListener("click", ()=> alert("Se enviará un correo de recuperación (simulado)."));
 
 // ---------------- Guardar Perfil ----------------
 guardarBtn.addEventListener("click", async ()=>{
@@ -515,59 +508,34 @@ guardarBtn.addEventListener("click", async ()=>{
     Portada:perfilPortada.value 
   };
   try{
-    const res = await fetch(API_URL,{ 
-      method:"POST", 
-      headers:{"Content-Type":"application/json"}, 
-      body:JSON.stringify({action:"actualizarPerfilClub", ...perfil}) 
-    });
+    const res = await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"actualizarPerfilClub", ...perfil}) });
     const data = await res.json();
     modalLoader.style.display="none";
-    if(data.status==="ok"){ 
+    if(data.status==="ok"){
       alert("Perfil guardado correctamente");
       profileModal.style.display="none";
-      portadaImg.src=perfil.Portada;
+      portadaImg.src = perfil.Portada;
       window.location.reload();
     } else alert("Error: "+data.msg);
-  }catch(err){ modalLoader.style.display="none"; alert("Error al guardar: "+err.message); }
+  } catch(err){ modalLoader.style.display="none"; alert("Error al guardar: "+err.message); }
 });
 
-// ---------------- Animaciones Scroll ----------------
-const sections = document.querySelectorAll("section");
-window.addEventListener("scroll", ()=>{ 
-  sections.forEach(sec=>{
+// ---------------- Animaciones y Scroll ----------------
+window.addEventListener("scroll", ()=>{
+  document.querySelectorAll("section").forEach(sec=>{
     if(sec.getBoundingClientRect().top < window.innerHeight-100) sec.classList.add("visible");
   });
-});
-
-// Ajuste hero
-function ajustarHero() {
-  if (!portadaImg.complete || portadaImg.naturalWidth === 0) return;
-  const imgRatio = portadaImg.naturalHeight / portadaImg.naturalWidth;
-  const screenWidth = window.innerWidth;
-  document.querySelector(".hero").style.height = (screenWidth * imgRatio) + "px";
-}
-portadaImg.addEventListener("load", ajustarHero);
-window.addEventListener("resize", ajustarHero);
-
-// Animación palabra por palabra
-function animarTexto(element){
-  const text = element.innerText.trim();
-  element.innerHTML = text.split(' ').map(w=>`<span class="fade-word">${w}</span>`).join(' ');
-  const palabras = element.querySelectorAll('.fade-word');
-  palabras.forEach((word,i)=>setTimeout(()=>word.classList.add('visible'), i*100));
-}
-
-// Parallax portada
-window.addEventListener("scroll", () => { 
-  const y = window.scrollY;
-  if(window.innerWidth > 768) portadaImg.style.transform = `translateY(${y*0.2}px) translateX(-50%)`;
+  if(window.innerWidth>768) portadaImg.style.transform = `translateY(${window.scrollY*0.2}px) translateX(-50%)`;
   else portadaImg.style.transform = `translateY(0) translateX(-50%)`;
 });
+portadaImg.addEventListener("load", ajustarHero);
+window.addEventListener("resize", ajustarHero);
 
 // ---------------- Inicialización ----------------
 bloquearInputs();
 cargarClub();
 </script>
+
 
 </body>
 </html>
