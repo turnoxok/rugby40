@@ -400,9 +400,29 @@ function ajustarHero() {
   document.querySelector(".hero").style.height = (window.innerWidth * imgRatio) + "px";
 }
 
-// ---------------- Menú móvil ----------------
+
+// ---------------- Menú móvil corregido ----------------
+function initMobileMenu(){
+  // Copiar los items del menú principal al menú móvil
+  const menuItems = document.querySelectorAll(".menu-items li a");
+  mobileMenu.innerHTML = "";
+  menuItems.forEach(item=>{
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = item.href;
+    a.textContent = item.textContent;
+    a.addEventListener("click", ()=> mobileMenu.classList.remove("show")); // cerrar menú al click
+    li.appendChild(a);
+    mobileMenu.appendChild(li);
+  });
+}
+
+// Abrir/cerrar menú
 hamburger.addEventListener("click", ()=> mobileMenu.classList.toggle("show"));
-mobileMenu.querySelectorAll("a").forEach(link => link.addEventListener("click", ()=> mobileMenu.classList.remove("show")));
+
+// Inicializar menú móvil al cargar
+initMobileMenu();
+
 
 // ---------------- Cargar Perfil y Partidos ----------------
 async function cargarClub(){
