@@ -332,7 +332,12 @@ menuItems.forEach(a => {
 hamburger.addEventListener("click", ()=>{ 
   mobileMenu.classList.toggle("show"); 
 });
-
+// Cerrar menú móvil al tocar un enlace
+mobileMenu.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    mobileMenu.classList.remove("show");
+  });
+});
 let loggedAsAdmin = false;
 function bloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true); }
 function desbloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false); }
