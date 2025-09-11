@@ -651,6 +651,24 @@ window.addEventListener("resize", ajustarHero);
 bloquearInputs();
 cargarClub();
 </script>
+<script>
+async function recuperarClave(email, clave) {
+  const res = await fetch("/.netlify/functions/recuperarClave", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, clave })
+  });
+  const data = await res.json();
+  if (data.status === "ok") alert("Correo enviado!");
+  else alert("Error: " + data.message);
+}
+
+// Ejemplo: cuando el usuario hace click en "Recuperar contraseña"
+document.getElementById("btnRecuperarPass").addEventListener("click", () => {
+  const email = prompt("Ingresa tu email");
+  if (email) recuperarClave(email, "claveSimulada123");
+});
+</script>
 
 
 </body>
