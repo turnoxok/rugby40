@@ -371,7 +371,7 @@ section.visible { opacity:1; transform:translateY(0); }
   </ul>
   <div class="admin-btns">
     <button id="loginBtn">Login Admin</button>
-    <button id="guardarBtn" style="display:none;">Guardar Perfil</button>
+    <button id="guardarModalBtn" style="display:none;">Guardar Perfil</button>
     <div class="hamburger" id="hamburger">&#9776;</div>
   </div>
   <ul class="mobile" id="mobileMenu"></ul>
@@ -420,7 +420,7 @@ section.visible { opacity:1; transform:translateY(0); }
     <label>WhatsApp</label><input type="text" id="perfilWhatsapp">
     <label>Instagram</label><input type="text" id="perfilInstagram">
     <label>Portada (URL)</label><input type="text" id="perfilPortada">
-    <button id="guardarBtn">Guardar Cambios</button>
+    <button id="guardarModalBtn">Guardar Cambios</button>
     <div id="modalLoader" class="spinner"></div>
   </div>
 </div>
@@ -450,7 +450,7 @@ const perfilInstagram = document.getElementById("perfilInstagram");
 const perfilPortada = document.getElementById("perfilPortada");
 
 const loginBtn = document.getElementById("loginBtn");
-const guardarBtn = document.getElementById("guardarBtn");
+const guardarModalBtn = document.getElementById("guardarModalBtn");
 const portadaImg = document.getElementById("portadaImg");
 const descripcionClub = document.getElementById("descripcionClub");
 const clubLogo = document.getElementById("clubLogo");
@@ -601,7 +601,7 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
       desbloquearInputs();
       loggedAsAdmin = true;
       profileModal.style.display = "flex";
-      guardarBtn.style.display = "inline-block";
+      guardarModalBtn.style.display = "inline-block";
       modalLogin.style.display = "none";
     } else alert("Contraseña incorrecta");
   } catch(err){ console.error(err); alert("Error al loguear"); }
@@ -610,7 +610,7 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
 btnRecuperarPass.addEventListener("click", ()=> alert("Se enviará un correo de recuperación (simulado)."));
 
 // ---------------- Guardar Perfil ----------------
-guardarBtn.addEventListener("click", async ()=>{
+guardarModalBtn.addEventListener("click", async ()=>{
   if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
   modalLoader.style.display="block";
   const perfil = { 
