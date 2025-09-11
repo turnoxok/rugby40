@@ -7,341 +7,115 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-* { box-sizing:border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; scroll-behavior:smooth; }
-body { background:#fff; color:#000; }
-
-/* ---------------- Navbar ---------------- */
-.navbar {
-  position:fixed;
-  top:0;
-  width:100%;
-  background:#fff;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 20px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  z-index:1000;
+/* --- Loader --- */
+#loader {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  display:flex; justify-content:center; align-items:center;
+  background:rgba(255,255,255,0.8); z-index:9999; display:none;
 }
-.navbar .logo { font-weight:700; font-size:1.3em; color:#000; }
-.navbar .menu-items { display:flex; gap:20px; align-items:center; }
-.navbar .menu-items a { text-decoration:none; color:#000; font-weight:500; transition:0.3s; }
-.navbar .menu-items a:hover { color:#555; }
-
-/* Botones login/guardar */
-.navbar .admin-btns { display:flex; gap:10px; }
-.navbar button { padding:6px 12px; border:none; background:#000; color:#fff; border-radius:5px; cursor:pointer; transition:0.3s; }
-.navbar button:hover { background:#555; }
-
-/* Hamburger */
-.hamburger { display:none; font-size:1.5em; cursor:pointer; }
-.navbar ul.mobile {
-  display:none;
-  flex-direction:column;
-  position:absolute;
-  top:50px;
-  right:10px;
-  background:#fff;
-  border-radius:8px;
-  padding:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.2);
-  z-index:1001;
+.loader-rugby {
+  width:60px; height:35px; background:#3498db;
+  border-radius:50%/50%;
+  transform:rotate(45deg);
+  animation: spinRugby 1s linear infinite, brightnessRugby 2s ease-in-out infinite alternate;
 }
-.navbar ul.mobile.show { display:flex; }
-.navbar ul.mobile li { margin:10px 0; }
-.navbar ul.mobile li a { color:#000; text-decoration:none; }
+@keyframes spinRugby { 0% { transform:rotate(45deg);} 100% { transform:rotate(405deg);} }
+@keyframes brightnessRugby { 0% {filter:brightness(0.8);} 100% {filter:brightness(1.2);} }
 
-/* ---------------- Hero / Portada ---------------- */
-.hero {
-  position: relative;
-  width: 100%;
-  height: 60vh;
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #000;
+/* --- Modal --- */
+.modal {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.6); display:none;
+  justify-content:center; align-items:center; z-index:10000;
 }
+.modal-content {
+  background:#fff; padding:30px; border-radius:15px; width:90%; max-width:400px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.3); position:relative;
+  animation: fadeInModal 0.3s ease;
+}
+@keyframes fadeInModal { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+.close-modal { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
 
-.hero img {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* --- Hero / Parallax --- */
+.hero { position:relative; overflow:hidden; width:100%; height:60vh; }
+.hero img { position:absolute; top:0; left:50%; transform:translateX(-50%); width:100%; height:auto; transition: transform 0.2s, filter 0.3s; }
 
-.hero h1 {
-  position:relative;
-  z-index:1;
-  color:#fff;
-  font-size:3em;
-  text-shadow:2px 2px 8px rgba(0,0,0,0.7);
-  text-align:center;
-  padding:0 20px;
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 40%; /* cuánto del fondo cubrirá el degradado */
-  background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-  pointer-events: none; /* para que no bloquee clicks */
-  z-index: 1; /* por debajo del texto */
-}
-
-/* ---------------- Sections ---------------- */
-section {
-  max-width:900px;
-  margin:50px auto 50px auto;
-  padding:20px;
-  opacity:0;
-  transform:translateY(50px);
-  transition:all 0.8s ease;
-}
+/* --- Secciones --- */
+section { opacity:0; transform:translateY(30px); transition:all 0.6s ease; }
 section.visible { opacity:1; transform:translateY(0); }
 
-/* Quiénes somos */
-#quienesSomos img { width:100%; border-radius:8px; margin-top:20px; max-width: 500px;}
-#quienesSomos p {
-  max-width: 800px;
-  margin: 0 auto;
-  line-height: 1.6;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  padding: 0 10px;
-  font-size: 1.1em;
-  text-align: justify;
-}
+/* --- Texto animado --- */
+.fade-word { opacity:0; display:inline-block; transition:opacity 0.5s ease; }
+.fade-word.visible { opacity:1; }
 
-/* Ajustes responsive */
-@media(max-width:768px){
-  #quienesSomos p {
-    font-size: 1em;
-    padding: 0 15px;
-  }
-}
+/* --- Botones --- */
+button { background:#3498db; color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; transition:background 0.3s; }
+button:hover { background:#2980b9; }
 
-/* Partidos */
-#listaPartidos { display:flex; flex-wrap:wrap; gap:20px; }
-.partido-card {
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  overflow:hidden;
-  transition:transform 0.3s, box-shadow 0.3s;
-  flex:1 1 calc(33% - 20px);
-  display:flex;
-  flex-direction:column;
-}
-.partido-card:hover {
-  transform:translateY(-5px);
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-}
-.partido-card img { width:100%; height:auto; object-fit:cover; }
-.partido-info { padding:15px; }
-.partido-info h3 { margin-bottom:8px; font-size:1.2em; color:#000; }
-.partido-info p { margin:5px 0; }
-.partido-info a { color:#000; text-decoration:none; }
-.partido-info a:hover { text-decoration:underline; }
-
-/* Contacto */
-.contacto { display:flex; flex-wrap:wrap; gap:20px; font-size:1.2em; margin-top:20px; }
-.contacto a { color:#000; transition:0.3s; }
-.contacto a:hover { color:#555; }
-.map-container { margin-top:20px; width:100%; height:400px; border-radius:8px; overflow:hidden; }
-
-/* Admin form hidden by default */
-#profileContainer { display:none; margin:20px auto; max-width:800px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-
-/* Loader general */
-#loader {
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(135deg, #0b1a3f, #1a2b5f); /* azul oscuro degradado */
-  z-index: 2000;
-}
-
-
-/* Spinner circular */
-.spinner {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #a0c4ff, #0b1a3f);
-  animation: pulse 1s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity:1; }
-  50% { transform: scale(1.2); opacity:0.7; }
-}
-/* ---------------- Responsive ---------------- */
-@media(max-width:1024px){ .partido-card { flex:1 1 calc(50% - 20px); } }
-@media(max-width:768px){
-  .hamburger { display:block; }
-  .navbar .menu-items { display:none; }
-  .hero h1 { font-size:2em; }
-  .partido-card { flex:1 1 100%; }
-}
-
-/* Animación palabra por palabra */
-.fade-word {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  word-break: break-word;      /* evita que palabras largas salgan */
-  overflow-wrap: break-word;   /* compatibilidad */
-}
-
-.fade-word.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Ajuste responsive para que no se rompa en móviles */
-@media(max-width:768px){
-  #quienesSomos p {
-    font-size: 1em;
-    padding: 0 15px;
-    word-break: break-word;
-  }
-  .fade-word {
-    font-size: 1em; /* opcional: reduce tamaño si es necesario */
-  }
-}
-/* Modal full screen */
-#profileModal {
-  display:none;
-  position:fixed;
-  top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.6); /* fondo transparente */
-  z-index:3000;
-  justify-content:center;
-  align-items:center;
-}
-#profileModal .modal-content {
-  background:#fff;
-  padding:30px;
-  border-radius:12px;
-  max-width:600px;
-  width:90%;
-  max-height:90%;
-  overflow-y:auto;
-  position:relative;
-}
-#profileModal .close {
-  position:absolute;
-  top:10px; right:15px;
-  font-size:1.5em;
-  cursor:pointer;
-}
-#modalLoader {
-  display:none;
-  width:50px; height:50px;
-  border:5px solid #ddd;
-  border-top:5px solid #000;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin:20px auto 0 auto;
-}
-
+/* --- Navbar --- */
+.navbar { display:flex; justify-content:space-between; align-items:center; padding:15px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:0; z-index:1000; }
+.navbar button { margin-left:10px; }
 </style>
+
 </head>
 <body>
 
-<!-- Loader -->
-<div id="loader">
-  <div class="spinner"></div>
-</div>
+<div id="loader"><div class="loader-rugby"></div></div>
 
 <!-- Navbar -->
-<nav class="navbar">
-  <div class="logo" id="clubLogo">Club Rugby</div>
-  <ul class="menu-items" id="menu">
-    <li><a href="#quienesSomos">Quiénes Somos</a></li>
-    <li><a href="#portada">Portada</a></li>
-    <li><a href="#partidos">Próximos Partidos</a></li>
-    <li><a href="#contacto">Contacto</a></li>
-  </ul>
-  <div class="admin-btns">
+<div class="navbar">
+  <h2 id="clubLogo">Club Rugby</h2>
+  <div>
     <button id="loginBtn">Login Admin</button>
-    <button id="guardarBtn" style="display:none;">Guardar Perfil</button>
-    <div class="hamburger" id="hamburger">&#9776;</div>
+    <button id="guardarBtn" style="display:none;">Guardar Cambios</button>
   </div>
-  <ul class="mobile" id="mobileMenu"></ul>
-</nav>
-
-<!-- Hero -->
-<div class="hero" id="portada">
-  <img id="portadaImg" src="" alt="Portada">
 </div>
 
-<!-- Quiénes somos -->
-<section id="quienesSomos">
-  <h2>Quiénes Somos</h2>
+<!-- Hero -->
+<div class="hero">
+  <img id="portadaImg" src="" alt="Portada Club">
+</div>
+
+<!-- Descripción -->
+<section>
+  <h2>Descripción</h2>
   <p id="descripcionClub"></p>
 </section>
 
 <!-- Partidos -->
-<section id="partidos">
-  <h2>Próximos Partidos</h2>
+<section>
+  <h2>Partidos</h2>
   <div id="listaPartidos"></div>
 </section>
 
-<!-- Contacto -->
-<section id="contacto">
-  <h2>Contacto</h2>
-  <div class="contacto">
-    <a href="#" id="telLink"><i class="fas fa-phone"></i> Teléfono</a>
-    <a href="#" id="whatsappLink"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-    <a href="#" id="instagramLink"><i class="fab fa-instagram"></i> Instagram</a>
-  </div>
-  <div class="map-container">
-    <iframe id="mapa" src="" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-  </div>
-</section>
-
-
-<!-- Modal Admin Fullscreen -->
-<div id="profileModal">
+<!-- Modal Login -->
+<div id="modalLogin" class="modal">
   <div class="modal-content">
-    <span class="close" id="closeModal">&times;</span>
-    <h2>Editar Perfil del Club</h2>
-    <label>Nombre del Club</label><input type="text" id="perfilNombre">
-    <label>Dirección</label><input type="text" id="perfilDireccion">
-    <label>Teléfono</label><input type="text" id="perfilTelefono">
-    <label>Quiénes somos</label><textarea id="perfilDescripcion" rows="4"></textarea>
-    <label>WhatsApp</label><input type="text" id="perfilWhatsapp">
-    <label>Instagram</label><input type="text" id="perfilInstagram">
-    <label>Portada (URL)</label><input type="text" id="perfilPortada">
-    <button id="guardarBtn">Guardar Cambios</button>
-    <div id="modalLoader" class="spinner"></div>
+    <span class="close-modal" id="cerrarModal">&times;</span>
+    <h3>Login Admin</h3>
+    <input type="password" id="inputAdminPass" placeholder="Contraseña" style="width:100%; margin:10px 0; padding:10px; border-radius:6px; border:1px solid #ccc;">
+    <button id="btnIngresarAdmin">Ingresar</button>
+    <button id="btnRecuperarPass">Recuperar contraseña</button>
   </div>
 </div>
 
-<!-- Modal Login Admin -->
-<div id="modalLogin" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000;">
-  <div style="background:#fff; padding:30px; border-radius:10px; max-width:400px; width:90%; text-align:center; position:relative;">
-    <h2>Login Admin</h2>
-    <input type="password" id="inputAdminPass" placeholder="Ingrese contraseña" style="width:100%; padding:10px; margin:15px 0; border-radius:5px; border:1px solid #ccc;">
-    <button id="btnIngresarAdmin" style="padding:10px 20px; background:#000; color:#fff; border:none; border-radius:5px; cursor:pointer;">Ingresar</button>
-    <p style="margin-top:10px;"><a href="#" id="btnRecuperarPass">¿Olvidaste tu contraseña?</a></p>
-    <span id="cerrarModal" style="position:absolute; top:10px; right:15px; font-size:1.5em; cursor:pointer;">&times;</span>
+<!-- Modal Perfil (solo lectura si no logueado) -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" id="closeModal">&times;</span>
+    <h3>Perfil Club</h3>
+    <label>Nombre</label><input id="perfilNombre"><br>
+    <label>Dirección</label><input id="perfilDireccion"><br>
+    <label>Teléfono</label><input id="perfilTelefono"><br>
+    <label>Descripción</label><textarea id="perfilDescripcion"></textarea><br>
+    <label>WhatsApp</label><input id="perfilWhatsapp"><br>
+    <label>Instagram</label><input id="perfilInstagram"><br>
+    <label>Portada</label><input id="perfilPortada"><br>
   </div>
 </div>
 
   <script>
-// ---------------- Elementos ----------------
+// -------- Variables y elementos --------
 const API_URL = "/.netlify/functions/api";
 const username = window.location.pathname.slice(1);
 
@@ -358,15 +132,8 @@ const guardarBtn = document.getElementById("guardarBtn");
 const portadaImg = document.getElementById("portadaImg");
 const descripcionClub = document.getElementById("descripcionClub");
 const clubLogo = document.getElementById("clubLogo");
-const telLink = document.getElementById("telLink");
-const whatsappLink = document.getElementById("whatsappLink");
-const instagramLink = document.getElementById("instagramLink");
-const mapa = document.getElementById("mapa");
 const listaPartidos = document.getElementById("listaPartidos");
 const loader = document.getElementById("loader");
-
-const hamburger = document.getElementById("hamburger");
-const mobileMenu = document.getElementById("mobileMenu");
 
 const modalLogin = document.getElementById("modalLogin");
 const inputAdminPass = document.getElementById("inputAdminPass");
@@ -380,13 +147,9 @@ const modalLoader = document.getElementById("modalLoader");
 
 let loggedAsAdmin = false;
 
-// ---------------- Funciones ----------------
-function bloquearInputs(){ 
-  [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true); 
-}
-function desbloquearInputs(){ 
-  [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false); 
-}
+// -------- Funciones util --------
+function bloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true); }
+function desbloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false); }
 
 function animarTexto(element){
   const text = element.innerText.trim();
@@ -394,144 +157,90 @@ function animarTexto(element){
   element.querySelectorAll('.fade-word').forEach((word,i)=>setTimeout(()=>word.classList.add('visible'), i*100));
 }
 
-function ajustarHero() {
-  if (!portadaImg.complete || portadaImg.naturalWidth === 0) return;
-  const imgRatio = portadaImg.naturalHeight / portadaImg.naturalWidth;
-  document.querySelector(".hero").style.height = (window.innerWidth * imgRatio) + "px";
+function ajustarHero(){ 
+  if (!portadaImg.complete || portadaImg.naturalWidth===0) return;
+  const imgRatio = portadaImg.naturalHeight/portadaImg.naturalWidth;
+  document.querySelector(".hero").style.height = (window.innerWidth*imgRatio)+"px";
 }
 
-// ---------------- Menú móvil ----------------
-hamburger.addEventListener("click", ()=> mobileMenu.classList.toggle("show"));
-mobileMenu.querySelectorAll("a").forEach(link => link.addEventListener("click", ()=> mobileMenu.classList.remove("show")));
-
-// ---------------- Cargar Perfil y Partidos ----------------
-async function cargarClub(){
-  loader.style.display="flex";
-  try {
-    const [resPerfil, resPartidos] = await Promise.all([
-      fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"obtenerPerfilClub", username }) }),
-      fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"listarEventos" }) })
-    ]);
-
-    const dataPerfil = await resPerfil.json();
-    if(dataPerfil.status==="ok"){
-      const p=dataPerfil.perfil;
-      clubLogo.textContent = p.NombreClub || "Club Rugby";
-      descripcionClub.textContent = p.Descripción || "";
-      animarTexto(descripcionClub);
-
-      portadaImg.src = p.Portada || "";
-      perfilNombre.value = p.NombreClub || "";
-      perfilDireccion.value = p.Dirección || "";
-      perfilTelefono.value = p.Teléfono || "";
-      perfilDescripcion.value = p.Descripción || "";
-      perfilWhatsapp.value = p.WhatsApp || "";
-      perfilInstagram.value = p.Instagram || "";
-      perfilPortada.value = p.Portada || "";
-
-      telLink.href = `tel:${p.Teléfono||""}`;
-      whatsappLink.href = `https://wa.me/${p.WhatsApp||""}`;
-      instagramLink.href = `https://instagram.com/${p.Instagram||""}`;
-      if(p.Dirección) mapa.src=`https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
-    }
-
-    // ---------------- Filtrar y mostrar partidos ----------------
-    const rawPartidos = await resPartidos.json();
-    const hoy = new Date();
-    const partidosNorm = rawPartidos.map(raw=>{
-      const ev={};
-      for(const k in raw){ if(!raw.hasOwnProperty(k)) continue;
-        const nk=k.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'');
-        ev[nk]=raw[k];
-      }
-      return { id:ev.id||ev.idevento||ev.id, cluborganizador:ev.cluborganizador||'', estadoinvitacion:ev.estadoinvitacion||ev.estado||'', fecha:ev.fecha||'', lugar:ev.lugar||'', imagen:ev.imagen||'', _raw:raw };
-    });
-    const partidosFiltrados = partidosNorm.filter(p=>{
-      const estado = (p.estadoinvitacion||'').toLowerCase();
-      const fechaEvento = p.fecha ? new Date(p.fecha) : null;
-      return estado==='aceptado' && (!fechaEvento||fechaEvento>=hoy);
-    });
-
-    listaPartidos.innerHTML = partidosFiltrados.length === 0 ? "<p>No hay partidos activos.</p>" :
-      partidosFiltrados.map(part=>`
-        <div class="partido-card">
-          <img src="${part.imagen||'https://via.placeholder.com/600x300'}" alt="Partido">
-          <div class="partido-info">
-            <h3>${part.cluborganizador||'Club'}</h3>
-            <p><strong>Fecha:</strong> ${part.fecha}</p>
-            <p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p>
-          </div>
-        </div>
-      `).join('');
-
-  } catch(err){ 
-    console.error(err);
-    listaPartidos.innerHTML="<p>Error al cargar club o partidos.</p>";
-  } finally{ loader.style.display="none"; }
-}
-
-// ---------------- Login Admin ----------------
-loginBtn.addEventListener("click", ()=> modalLogin.style.display="flex");
-cerrarModal.addEventListener("click", ()=> modalLogin.style.display="none");
-closeModal.addEventListener("click", ()=> profileModal.style.display="none");
-
-btnIngresarAdmin.addEventListener("click", async ()=>{
-  const pass = inputAdminPass.value; if(!pass) return;
-  try{
-    const res = await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"loginClub", username, password:pass}) });
-    const data = await res.json();
-    if(data.status==="ok"){
-      alert("Bienvenido Admin");
-      desbloquearInputs();
-      loggedAsAdmin = true;
-      profileModal.style.display = "flex";
-      guardarBtn.style.display = "inline-block";
-      modalLogin.style.display = "none";
-    } else alert("Contraseña incorrecta");
-  } catch(err){ console.error(err); alert("Error al loguear"); }
-});
-
-btnRecuperarPass.addEventListener("click", ()=> alert("Se enviará un correo de recuperación (simulado)."));
-
-// ---------------- Guardar Perfil ----------------
-guardarBtn.addEventListener("click", async ()=>{
-  if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
-  modalLoader.style.display="block";
-  const perfil = { 
-    username, 
-    NombreClub:perfilNombre.value, 
-    Dirección:perfilDireccion.value, 
-    Teléfono:perfilTelefono.value, 
-    Descripción:perfilDescripcion.value, 
-    WhatsApp:perfilWhatsapp.value, 
-    Instagram:perfilInstagram.value, 
-    Portada:perfilPortada.value 
-  };
-  try{
-    const res = await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"actualizarPerfilClub", ...perfil}) });
-    const data = await res.json();
-    modalLoader.style.display="none";
-    if(data.status==="ok"){
-      alert("Perfil guardado correctamente");
-      profileModal.style.display="none";
-      portadaImg.src = perfil.Portada;
-      window.location.reload();
-    } else alert("Error: "+data.msg);
-  } catch(err){ modalLoader.style.display="none"; alert("Error al guardar: "+err.message); }
-});
-
-// ---------------- Animaciones y Scroll ----------------
+// -------- Event Listeners --------
 window.addEventListener("scroll", ()=>{
-  document.querySelectorAll("section").forEach(sec=>{
-    if(sec.getBoundingClientRect().top < window.innerHeight-100) sec.classList.add("visible");
-  });
-  if(window.innerWidth>768) portadaImg.style.transform = `translateY(${window.scrollY*0.2}px) translateX(-50%)`;
-  else portadaImg.style.transform = `translateY(0) translateX(-50%)`;
+  document.querySelectorAll("section").forEach(sec=>{ if(sec.getBoundingClientRect().top<window.innerHeight-100) sec.classList.add("visible"); });
+  if(window.innerWidth>768) portadaImg.style.transform=`translateY(${window.scrollY*0.2}px) translateX(-50%)`;
+  else portadaImg.style.transform=`translateY(0) translateX(-50%)`;
 });
 portadaImg.addEventListener("load", ajustarHero);
 window.addEventListener("resize", ajustarHero);
 
-// ---------------- Inicialización ----------------
+loginBtn.addEventListener("click", ()=>modalLogin.style.display="flex");
+cerrarModal.addEventListener("click", ()=>modalLogin.style.display="none");
+closeModal.addEventListener("click", ()=>profileModal.style.display="none");
+
+// -------- Cargar Perfil y Partidos --------
+async function cargarClub(){
+  loader.style.display="flex";
+  try{
+    const [resPerfil,resPartidos] = await Promise.all([
+      fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"obtenerPerfilClub",username})}),
+      fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"listarEventos"})})
+    ]);
+    const dataPerfil = await resPerfil.json();
+    if(dataPerfil.status==="ok"){
+      const p=dataPerfil.perfil;
+      clubLogo.textContent = p.NombreClub||"Club Rugby";
+      descripcionClub.textContent = p.Descripción||"";
+      animarTexto(descripcionClub);
+      portadaImg.src = p.Portada||"";
+      perfilNombre.value = p.NombreClub||"";
+      perfilDireccion.value = p.Dirección||"";
+      perfilTelefono.value = p.Teléfono||"";
+      perfilDescripcion.value = p.Descripción||"";
+      perfilWhatsapp.value = p.WhatsApp||"";
+      perfilInstagram.value = p.Instagram||"";
+      perfilPortada.value = p.Portada||"";
+    }
+    const rawPartidos = await resPartidos.json();
+    const hoy = new Date();
+    const partidosNorm = rawPartidos.map(raw=>{
+      const ev={}; for(const k in raw){ if(!raw.hasOwnProperty(k)) continue;
+      const nk=k.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,''); ev[nk]=raw[k]; }
+      return { id:ev.id||ev.idevento||ev.id, cluborganizador:ev.cluborganizador||'', estadoinvitacion:ev.estadoinvitacion||ev.estado||'', fecha:ev.fecha||'', lugar:ev.lugar||'', imagen:ev.imagen||'', _raw:raw };
+    });
+    const partidosFiltrados = partidosNorm.filter(p=>{ const estado=(p.estadoinvitacion||'').toLowerCase(); const fechaEvento=p.fecha?new Date(p.fecha):null; return estado==='aceptado' && (!fechaEvento||fechaEvento>=hoy); });
+    listaPartidos.innerHTML = partidosFiltrados.length===0? "<p>No hay partidos activos.</p>" : partidosFiltrados.map(p=>`<div class="partido-card"><img src="${p.imagen||'https://via.placeholder.com/600x300'}"><div><h3>${p.cluborganizador||'Club'}</h3><p>Fecha: ${p.fecha}</p><p>Lugar: <a href="https://maps.google.com/?q=${encodeURIComponent(p.lugar)}" target="_blank">${p.lugar}</a></p></div></div>`).join('');
+  } catch(err){ console.error(err); listaPartidos.innerHTML="<p>Error al cargar club o partidos.</p>"; }
+  finally{ loader.style.display="none"; }
+}
+
+// -------- Login Admin --------
+btnIngresarAdmin.addEventListener("click", async ()=>{
+  const pass=inputAdminPass.value; if(!pass) return;
+  try{
+    const res = await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"loginClub",username,password:pass})});
+    const data = await res.json();
+    if(data.status==="ok"){
+      alert("Bienvenido Admin");
+      desbloquearInputs(); loggedAsAdmin=true; profileModal.style.display="flex"; guardarBtn.style.display="inline-block"; modalLogin.style.display="none";
+    } else alert("Contraseña incorrecta");
+  } catch(err){ console.error(err); alert("Error al loguear"); }
+});
+btnRecuperarPass.addEventListener("click", ()=>alert("Se enviará un correo de recuperación (simulado)."));
+
+// -------- Guardar cambios --------
+guardarBtn.addEventListener("click", async ()=>{
+  if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
+  loader.style.display="flex";
+  const perfil = { username, NombreClub:perfilNombre.value, Dirección:perfilDireccion.value, Teléfono:perfilTelefono.value, Descripción:perfilDescripcion.value, WhatsApp:perfilWhatsapp.value, Instagram:perfilInstagram.value, Portada:perfilPortada.value };
+  try{
+    const res = await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"actualizarPerfilClub", ...perfil})});
+    const data = await res.json();
+    loader.style.display="none";
+    if(data.status==="ok"){ alert("Perfil guardado correctamente"); portadaImg.src=perfil.Portada; window.location.reload(); }
+    else alert("Error: "+data.msg);
+  } catch(err){ loader.style.display="none"; alert("Error al guardar: "+err.message); }
+});
+
+// -------- Inicial --------
 bloquearInputs();
 cargarClub();
 </script>
