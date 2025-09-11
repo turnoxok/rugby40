@@ -608,18 +608,16 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
 });
 
 btnRecuperarPass.addEventListener("click", async ()=>{
-  console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS)
   const email = prompt("Ingresa tu correo de administrador:");
   if(!email) return;
 
-  // Podés mandar la clave real o una temporal. Por ahora la pongo fija para probar.
-  const clave = "123456";
+  console.log("Email ingresado por el usuario:", email); // <-- así se hace
 
   try {
     const res = await fetch("/.netlify/functions/recuperarClave", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, clave })
+      body: JSON.stringify({ email })
     });
 
     const data = await res.json();
