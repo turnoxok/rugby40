@@ -1,40 +1,43 @@
 const nodemailer = require("nodemailer");
 
-exports.handler = async (event, context) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Método no permitido" };
-  }
-
+exports.handler = async (event) => {
   try {
-    const { email, clave } = JSON.parse(event.body); // email de destino y clave a enviar
+    const { email } = JSON.parse(event.body);
 
-    if (!email || !clave) {
-      return { statusCode: 400, body: "Faltan parámetros" };
+    if (!email) {
+      return { statusCode: 400, body: JSON.stringify({ status: "error", msg: "Falta el email" }) };
     }
 
-    // Configuración del transporter con Gmail y variables de entorno
+    // Generar clave temporal aleatoria
+    const claveTemporal = Math.random().toString(36).slice(-8);
+
+    // Transporter con Gmail y credenciales del .env en Netlify
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.EMAIL_USER, // tu correo de Gmail
-        pass: process.env.EMAIL_PASS  // contraseña de aplicación
+        user: process.env.EMAIL_USER, // tu correo Gmail
+        pass: process.env.EMAIL_PASS  // contraseña de app de Gmail
       }
     });
 
-    // Opciones del correo
+    // Configurar correo
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"Soporte TurnoX" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Recuperación de clave - Rugby40",
-      text: `Hola! Tu clave de acceso es: ${clave}`
+      subject: "Recuperación de clave",
+      text: `Tu clave temporal es: ${claveTemporal}\n\nIngresala en el login para continuar.`
     };
 
-    // Envío del correo
+    // Enviar
     await transporter.sendMail(mailOptions);
 
-    return { statusCode: 200, body: JSON.stringify({ status: "ok", msg: "Correo enviado" }) };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ status: "ok", msg: "Correo enviado", claveTemporal })
+    };
+
   } catch (err) {
-    console.error(err);
+    console.error("Error en recuperarClave:", err);
     return { statusCode: 500, body: JSON.stringify({ status: "error", msg: err.message }) };
   }
 };
