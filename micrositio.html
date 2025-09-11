@@ -55,24 +55,25 @@ body { background:#fff; color:#000; }
 .hero {
   position: relative;
   width: 100%;
+  height: 60vh;      /* ocupa 60% de la pantalla */
+  min-height: 300px; /* para móviles pequeños */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #000; /* de relleno */
+  background: #000;
 }
 
 .hero img {
   position: absolute;
-  top: 0; /* <- quitar los 40px */
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
-  transition: transform 0.5s ease-out;
+  object-fit: cover; /* cubre todo el contenedor */
 }
+
 
 
 .hero h1 {
@@ -186,10 +187,16 @@ section.visible { opacity:1; transform:translateY(0); }
   .partido-card { flex:1 1 100%; }
 }
   /* Animación palabra por palabra */
-
-
-
-
+.fade-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-word.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 
 </style>
@@ -409,14 +416,28 @@ window.addEventListener("scroll", ()=>{ sections.forEach(sec=>{ if(sec.getBoundi
 portadaImg.addEventListener("load", ajustarHero);
 // También al redimensionar la ventana
 window.addEventListener("resize", ajustarHero);
+function animarTexto(element){
+  const text = element.innerText.trim();
+  element.innerHTML = text.split(' ').map(w=>`<span class="fade-word">${w}</span>`).join(' ');
+  const palabras = element.querySelectorAll('.fade-word');
+  palabras.forEach((word, i) => {
+    setTimeout(()=> word.classList.add('visible'), i*100);
+  });
+}
+
+// Uso: después de cargar descripción
+animarTexto(descripcionClub);
 
 // ---------------- Parallax ----------------
-window.addEventListener("scroll", ()=>{ 
-  portadaImg.style.transform = 
-    `translateY(${window.scrollY*0.3}px) translateX(-50%)`; 
+
+window.addEventListener("scroll", () => { 
+  const y = window.scrollY;
+  if(window.innerWidth > 768){ // solo desktop
+    portadaImg.style.transform = `translateY(${y*0.2}px) translateX(-50%)`;
+  } else {
+    portadaImg.style.transform = `translateY(0) translateX(-50%)`;
+  }
 });
-
-
 cargarClub();
 </script>
 
