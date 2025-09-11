@@ -1,38 +1,52 @@
-// recuperarClave.js
+// netlify/functions/recuperarClave.js
 const nodemailer = require("nodemailer");
 
 exports.handler = async (event, context) => {
   try {
-    const { email, clave } = JSON.parse(event.body);
-
-    if (!email) {
-      return { statusCode: 400, body: JSON.stringify({ status: "error", msg: "Falta el email" }) };
+    // Solo aceptar POST
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
     }
 
-    // Configuración segura del transporter
+    // Parsear el body
+    const { email, clave } = JSON.parse(event.body);
+
+    if (!email || !clave) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ status: "error", msg: "Faltan datos" }),
+      };
+    }
+
+    // Configuración del transporter con variables de entorno
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
+        pass: process.env.EMAIL_PASS,
+      },
     });
 
-    // Contenido del correo
+    // Opciones del mail
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Recuperación de contraseña",
-      text: `Hola, tu clave es: ${clave}`
+      subject: "Recuperar clave",
+      text: `Hola, tu clave es: ${clave}`,
     };
 
-    // Enviar correo
+    // Enviar mail
     await transporter.sendMail(mailOptions);
 
-    return { statusCode: 200, body: JSON.stringify({ status: "ok" }) };
-
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ status: "ok" }),
+    };
   } catch (err) {
-    console.error("Error en recuperarClave:", err);
-    return { statusCode: 500, body: JSON.stringify({ status: "error", msg: err.message }) };
+    console.error("Error enviar mail:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ status: "error", msg: "Error al enviar correo" }),
+    };
   }
 };
