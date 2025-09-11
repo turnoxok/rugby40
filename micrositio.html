@@ -55,8 +55,8 @@ body { background:#fff; color:#000; }
 .hero {
   position: relative;
   width: 100%;
-  height: 60vh;      /* ocupa 60% de la pantalla */
-  min-height: 300px; /* para móviles pequeños */
+  height: 60vh;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,10 +71,8 @@ body { background:#fff; color:#000; }
   transform: translateX(-50%);
   width: 100%;
   height: 100%;
-  object-fit: cover; /* cubre todo el contenedor */
+  object-fit: cover;
 }
-
-
 
 .hero h1 {
   position:relative;
@@ -99,16 +97,15 @@ section.visible { opacity:1; transform:translateY(0); }
 
 /* Quiénes somos */
 #quienesSomos img { width:100%; border-radius:8px; margin-top:20px; max-width: 500px;}
-/* Quiénes somos - textos ajustados */
 #quienesSomos p {
-  max-width: 800px;        /* ancho máximo para no estirarse demasiado */
-  margin: 0 auto;           /* centrado horizontal */
-  line-height: 1.6;         /* mejorar lectura */
-  word-wrap: break-word;    /* cortar palabras muy largas */
-  overflow-wrap: break-word;/* compatibilidad */
-  padding: 0 10px;          /* espacio lateral en pantallas pequeñas */
-  font-size: 1.1em;         /* opcional, un poco más grande para lectura */
-  text-align: justify;       /* opcional, para un bloque más limpio */
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding: 0 10px;
+  font-size: 1.1em;
+  text-align: justify;
 }
 
 /* Ajustes responsive */
@@ -168,16 +165,16 @@ section.visible { opacity:1; transform:translateY(0); }
   width: 60px;
   height: 60px;
   border: 6px solid #ddd;
-  border-top: 6px solid #000; /* color del loader */
+  border-top: 6px solid #000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-/* Animación de giro */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
 /* ---------------- Responsive ---------------- */
 @media(max-width:1024px){ .partido-card { flex:1 1 calc(50% - 20px); } }
 @media(max-width:768px){
@@ -186,7 +183,8 @@ section.visible { opacity:1; transform:translateY(0); }
   .hero h1 { font-size:2em; }
   .partido-card { flex:1 1 100%; }
 }
-  /* Animación palabra por palabra */
+
+/* Animación palabra por palabra */
 .fade-word {
   display: inline-block;
   opacity: 0;
@@ -197,8 +195,6 @@ section.visible { opacity:1; transform:translateY(0); }
   opacity: 1;
   transform: translateY(0);
 }
-
-
 </style>
 </head>
 <body>
@@ -207,6 +203,7 @@ section.visible { opacity:1; transform:translateY(0); }
 <div id="loader">
   <div class="spinner"></div>
 </div>
+
 <!-- Navbar -->
 <nav class="navbar">
   <div class="logo" id="clubLogo">Club Rugby</div>
@@ -227,8 +224,6 @@ section.visible { opacity:1; transform:translateY(0); }
 <!-- Hero -->
 <div class="hero" id="portada">
   <img id="portadaImg" src="" alt="Portada">
- 
-  
 </div>
 
 <!-- Quiénes somos -->
@@ -271,8 +266,8 @@ section.visible { opacity:1; transform:translateY(0); }
 <script>
 // ---------------- Elementos ----------------
 const API_URL = "/.netlify/functions/api";
-const path = window.location.pathname;   
-const username = path.slice(1);          
+const path = window.location.pathname;
+const username = path.slice(1);
 
 const perfilNombre = document.getElementById("perfilNombre");
 const perfilDireccion = document.getElementById("perfilDireccion");
@@ -294,7 +289,6 @@ const mapa = document.getElementById("mapa");
 const listaPartidos = document.getElementById("listaPartidos");
 const loader = document.getElementById("loader");
 
- // Navbar móvil
 const hamburger = document.getElementById("hamburger");
 const mobileMenu = document.getElementById("mobileMenu");
 
@@ -314,7 +308,6 @@ hamburger.addEventListener("click", ()=>{
   mobileMenu.classList.toggle("show"); 
 });
 
-// Bloquear inputs
 let loggedAsAdmin = false;
 function bloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true); }
 function desbloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false); }
@@ -325,27 +318,29 @@ async function cargarClub() {
   try {
     const res = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"obtenerPerfilClub", username }) });
     const data = await res.json();
-    if(data.status==="ok"){ const p=data.perfil;
-     
-      clubLogo.textContent=p.NombreClub||"Club Rugby";
-      descripcionClub.textContent=p.Descripción||"";
-                           // inicializar animación después de cargar la descripción
-setupQuienesSomosAnimation();
+    if(data.status==="ok"){ 
+      const p=data.perfil;
+      clubLogo.textContent = p.NombreClub || "Club Rugby";
 
-      portadaImg.src=p.Portada||"";
-      perfilNombre.value=p.NombreClub||"";
-      perfilDireccion.value=p.Dirección||"";
-      perfilTelefono.value=p.Teléfono||"";
-      perfilDescripcion.value=p.Descripción||"";
-      perfilWhatsapp.value=p.WhatsApp||"";
-      perfilInstagram.value=p.Instagram||"";
-      perfilPortada.value=p.Portada||"";
-      telLink.href=`tel:${p.Teléfono||""}`;
-      whatsappLink.href=`https://wa.me/${p.WhatsApp||""}`;
-      instagramLink.href=`https://instagram.com/${p.Instagram||""}`;
+      // ---- Animación aquí ----
+      descripcionClub.textContent = p.Descripción || "";
+      animarTexto(descripcionClub);
+
+      portadaImg.src = p.Portada || "";
+      perfilNombre.value = p.NombreClub || "";
+      perfilDireccion.value = p.Dirección || "";
+      perfilTelefono.value = p.Teléfono || "";
+      perfilDescripcion.value = p.Descripción || "";
+      perfilWhatsapp.value = p.WhatsApp || "";
+      perfilInstagram.value = p.Instagram || "";
+      perfilPortada.value = p.Portada || "";
+      telLink.href = `tel:${p.Teléfono||""}`;
+      whatsappLink.href = `https://wa.me/${p.WhatsApp||""}`;
+      instagramLink.href = `https://instagram.com/${p.Instagram||""}`;
       if(p.Dirección) mapa.src=`https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
     }
 
+    // Partidos
     const res2 = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"listarEventos" }) });
     const rawPartidos = await res2.json();
     function normalizePartido(raw){
@@ -370,7 +365,7 @@ setupQuienesSomosAnimation();
       });
     }
 
-  } catch(err){ console.error("Error:",err); clubName.textContent="Error cargando club"; listaPartidos.innerHTML="<p>Error al cargar partidos.</p>"; }
+  } catch(err){ console.error("Error:",err); listaPartidos.innerHTML="<p>Error al cargar partidos.</p>"; }
   finally{ loader.style.display="none"; }
 }
 
@@ -401,49 +396,33 @@ guardarBtn.addEventListener("click", async ()=>{
 const sections = document.querySelectorAll("section");
 window.addEventListener("scroll", ()=>{ sections.forEach(sec=>{ if(sec.getBoundingClientRect().top<window.innerHeight-100) sec.classList.add("visible"); }); });
 
-
-  function ajustarHero() {
+// Ajustar hero
+function ajustarHero() {
   if (!portadaImg.complete || portadaImg.naturalWidth === 0) return;
-
   const imgRatio = portadaImg.naturalHeight / portadaImg.naturalWidth;
   const screenWidth = window.innerWidth;
   const newHeight = screenWidth * imgRatio;
-
   document.querySelector(".hero").style.height = newHeight + "px";
 }
-
-// Cuando carga la imagen
 portadaImg.addEventListener("load", ajustarHero);
-// También al redimensionar la ventana
 window.addEventListener("resize", ajustarHero);
+
+// Animación palabra por palabra
 function animarTexto(element){
   const text = element.innerText.trim();
   element.innerHTML = text.split(' ').map(w=>`<span class="fade-word">${w}</span>`).join(' ');
   const palabras = element.querySelectorAll('.fade-word');
-  palabras.forEach((word, i) => {
-    setTimeout(()=> word.classList.add('visible'), i*100);
-  });
+  palabras.forEach((word, i) => { setTimeout(()=> word.classList.add('visible'), i*100); });
 }
 
-// Uso: después de cargar descripción
-animarTexto(descripcionClub);
-
-// ---------------- Parallax ----------------
-
+// Parallax
 window.addEventListener("scroll", () => { 
   const y = window.scrollY;
-  if(window.innerWidth > 768){ // solo desktop
-    portadaImg.style.transform = `translateY(${y*0.2}px) translateX(-50%)`;
-  } else {
-    portadaImg.style.transform = `translateY(0) translateX(-50%)`;
-  }
+  if(window.innerWidth > 768){ portadaImg.style.transform = `translateY(${y*0.2}px) translateX(-50%)`; }
+  else { portadaImg.style.transform = `translateY(0) translateX(-50%)`; }
 });
+
 cargarClub();
 </script>
-
 </body>
 </html>
-
-
-
-
