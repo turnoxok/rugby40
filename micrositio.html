@@ -7,15 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* ---------------- Reset y body ---------------- */
 * { box-sizing:border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; scroll-behavior:smooth; }
 body { background:#fff; color:#000; }
 
 /* ---------------- Navbar ---------------- */
 .navbar {
-  position:fixed; top:0; width:100%;
+  position:fixed;
+  top:0;
+  width:100%;
   background:#fff;
-  display:flex; justify-content:space-between; align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   padding:10px 20px;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
   z-index:1000;
@@ -24,14 +27,23 @@ body { background:#fff; color:#000; }
 .navbar .menu-items { display:flex; gap:20px; align-items:center; }
 .navbar .menu-items a { text-decoration:none; color:#000; font-weight:500; transition:0.3s; }
 .navbar .menu-items a:hover { color:#555; }
+
+/* Botones login/guardar */
 .navbar .admin-btns { display:flex; gap:10px; }
 .navbar button { padding:6px 12px; border:none; background:#000; color:#fff; border-radius:5px; cursor:pointer; transition:0.3s; }
 .navbar button:hover { background:#555; }
+
+/* Hamburger */
 .hamburger { display:none; font-size:1.5em; cursor:pointer; }
 .navbar ul.mobile {
-  display:none; flex-direction:column;
-  position:absolute; top:50px; right:10px;
-  background:#fff; border-radius:8px; padding:10px;
+  display:none;
+  flex-direction:column;
+  position:absolute;
+  top:50px;
+  right:10px;
+  background:#fff;
+  border-radius:8px;
+  padding:10px;
   box-shadow:0 2px 8px rgba(0,0,0,0.2);
   z-index:1001;
 }
@@ -41,53 +53,87 @@ body { background:#fff; color:#000; }
 
 /* ---------------- Hero / Portada ---------------- */
 .hero {
-  position: relative; width: 100%;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden; background: #000;
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000; /* de relleno */
 }
+
 .hero img {
-  position: absolute; top:0; left:50%;
+  position: absolute;
+  top: 0; /* <- quitar los 40px */
+  left: 50%;
   transform: translateX(-50%);
-  width:100%; height:100%;
-  object-fit: contain; object-position: center;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.5s ease-out;
 }
+
+
 .hero h1 {
-  position:relative; z-index:1;
-  color:#fff; font-size:3em;
+  position:relative;
+  z-index:1;
+  color:#fff;
+  font-size:3em;
   text-shadow:2px 2px 8px rgba(0,0,0,0.7);
-  text-align:center; padding:0 20px;
+  text-align:center;
+  padding:0 20px;
 }
 
 /* ---------------- Sections ---------------- */
 section {
-  max-width:900px; margin:50px auto 50px auto; padding:20px;
-  opacity:0; transform:translateY(50px);
+  max-width:900px;
+  margin:50px auto 50px auto;
+  padding:20px;
+  opacity:0;
+  transform:translateY(50px);
   transition:all 0.8s ease;
 }
 section.visible { opacity:1; transform:translateY(0); }
 
-/* ---------------- Quiénes Somos ---------------- */
-#quienesSomos img { width:100%; border-radius:8px; margin-top:20px; max-width:500px; display:block; margin-left:auto; margin-right:auto; }
+/* Quiénes somos */
+#quienesSomos img { width:100%; border-radius:8px; margin-top:20px; max-width: 500px;}
+/* Quiénes somos - textos ajustados */
 #quienesSomos p {
-  max-width:800px; margin:0 auto; line-height:1.6;
-  padding:0 10px; font-size:1.1em; text-align:justify;
-  word-wrap: break-word; overflow-wrap: break-word;
+  max-width: 800px;        /* ancho máximo para no estirarse demasiado */
+  margin: 0 auto;           /* centrado horizontal */
+  line-height: 1.6;         /* mejorar lectura */
+  word-wrap: break-word;    /* cortar palabras muy largas */
+  overflow-wrap: break-word;/* compatibilidad */
+  padding: 0 10px;          /* espacio lateral en pantallas pequeñas */
+  font-size: 1.1em;         /* opcional, un poco más grande para lectura */
+  text-align: justify;       /* opcional, para un bloque más limpio */
 }
-.fade-word {
-  display:inline-block; opacity:0; transform: translateY(15px);
-  transition: all 0.4s ease; margin-right:0.25em;
-}
-.fade-word.visible { opacity:1; transform: translateY(0); }
 
-/* ---------------- Partidos ---------------- */
+/* Ajustes responsive */
+@media(max-width:768px){
+  #quienesSomos p {
+    font-size: 1em;
+    padding: 0 15px;
+  }
+}
+
+/* Partidos */
 #listaPartidos { display:flex; flex-wrap:wrap; gap:20px; }
 .partido-card {
-  background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  overflow:hidden; transition:transform 0.3s, box-shadow 0.3s;
-  flex:1 1 calc(33% - 20px); display:flex; flex-direction:column;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  overflow:hidden;
+  transition:transform 0.3s, box-shadow 0.3s;
+  flex:1 1 calc(33% - 20px);
+  display:flex;
+  flex-direction:column;
 }
-.partido-card:hover { transform:translateY(-5px); box-shadow:0 6px 14px rgba(0,0,0,0.15); }
+.partido-card:hover {
+  transform:translateY(-5px);
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+}
 .partido-card img { width:100%; height:auto; object-fit:cover; }
 .partido-info { padding:15px; }
 .partido-info h3 { margin-bottom:8px; font-size:1.2em; color:#000; }
@@ -95,24 +141,42 @@ section.visible { opacity:1; transform:translateY(0); }
 .partido-info a { color:#000; text-decoration:none; }
 .partido-info a:hover { text-decoration:underline; }
 
-/* ---------------- Contacto ---------------- */
+/* Contacto */
 .contacto { display:flex; flex-wrap:wrap; gap:20px; font-size:1.2em; margin-top:20px; }
 .contacto a { color:#000; transition:0.3s; }
 .contacto a:hover { color:#555; }
 .map-container { margin-top:20px; width:100%; height:400px; border-radius:8px; overflow:hidden; }
 
-/* ---------------- Admin form ---------------- */
+/* Admin form hidden by default */
 #profileContainer { display:none; margin:20px auto; max-width:800px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
 
-/* ---------------- Loader ---------------- */
+/* Loader general */
 #loader {
-  position: fixed; top:0; left:0; width:100%; height:100%;
-  display:flex; justify-content:center; align-items:center;
-  background: rgba(255,255,255,0.9); z-index:2000;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: rgba(255,255,255,0.9);
+  z-index: 2000;
 }
-.spinner { width:60px; height:60px; border:6px solid #ddd; border-top:6px solid #000; border-radius:50%; animation:spin 1s linear infinite; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+/* Spinner circular */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #ddd;
+  border-top: 6px solid #000; /* color del loader */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animación de giro */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 /* ---------------- Responsive ---------------- */
 @media(max-width:1024px){ .partido-card { flex:1 1 calc(50% - 20px); } }
 @media(max-width:768px){
@@ -121,14 +185,21 @@ section.visible { opacity:1; transform:translateY(0); }
   .hero h1 { font-size:2em; }
   .partido-card { flex:1 1 100%; }
 }
+  /* Animación palabra por palabra */
+
+
+
+
+
 
 </style>
 </head>
 <body>
 
 <!-- Loader -->
-<div id="loader"><div class="spinner"></div></div>
-
+<div id="loader">
+  <div class="spinner"></div>
+</div>
 <!-- Navbar -->
 <nav class="navbar">
   <div class="logo" id="clubLogo">Club Rugby</div>
@@ -149,6 +220,8 @@ section.visible { opacity:1; transform:translateY(0); }
 <!-- Hero -->
 <div class="hero" id="portada">
   <img id="portadaImg" src="" alt="Portada">
+ 
+  
 </div>
 
 <!-- Quiénes somos -->
@@ -201,11 +274,12 @@ const perfilDescripcion = document.getElementById("perfilDescripcion");
 const perfilWhatsapp = document.getElementById("perfilWhatsapp");
 const perfilInstagram = document.getElementById("perfilInstagram");
 const perfilPortada = document.getElementById("perfilPortada");
-const clubLogo = document.getElementById("clubLogo");
+const clubName = document.getElementById("clubName");
 const loginBtn = document.getElementById("loginBtn");
 const guardarBtn = document.getElementById("guardarBtn");
 const portadaImg = document.getElementById("portadaImg");
 const descripcionClub = document.getElementById("descripcionClub");
+const clubLogo = document.getElementById("clubLogo");
 const telLink = document.getElementById("telLink");
 const whatsappLink = document.getElementById("whatsappLink");
 const instagramLink = document.getElementById("instagramLink");
@@ -213,41 +287,43 @@ const mapa = document.getElementById("mapa");
 const listaPartidos = document.getElementById("listaPartidos");
 const loader = document.getElementById("loader");
 
-// Navbar móvil
+ // Navbar móvil
 const hamburger = document.getElementById("hamburger");
 const mobileMenu = document.getElementById("mobileMenu");
 
 // Llenar menú móvil
-document.querySelectorAll(".menu-items li a").forEach(a=>{
-  const li=document.createElement("li");
-  const link=document.createElement("a");
-  link.href=a.href;
-  link.textContent=a.textContent;
+const menuItems = document.querySelectorAll(".menu-items li a");
+menuItems.forEach(a => {
+  const li = document.createElement("li");
+  const link = document.createElement("a");
+  link.href = a.href;
+  link.textContent = a.textContent;
   li.appendChild(link);
   mobileMenu.appendChild(li);
 });
 
 // Toggle menú móvil
-hamburger.addEventListener("click", ()=>{ mobileMenu.classList.toggle("show"); });
+hamburger.addEventListener("click", ()=>{ 
+  mobileMenu.classList.toggle("show"); 
+});
 
-// Bloquear / desbloquear inputs
-let loggedAsAdmin=false;
-function bloquearInputs(){ [perfilNombre,perfilDireccion,perfilTelefono,perfilDescripcion,perfilWhatsapp,perfilInstagram,perfilPortada].forEach(i=>i.disabled=true);}
-function desbloquearInputs(){ [perfilNombre,perfilDireccion,perfilTelefono,perfilDescripcion,perfilWhatsapp,perfilInstagram,perfilPortada].forEach(i=>i.disabled=false);}
+// Bloquear inputs
+let loggedAsAdmin = false;
+function bloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=true); }
+function desbloquearInputs(){ [perfilNombre, perfilDireccion, perfilTelefono, perfilDescripcion, perfilWhatsapp, perfilInstagram, perfilPortada].forEach(i=>i.disabled=false); }
 
 // ---------------- Cargar club ----------------
 async function cargarClub() {
-  loader.style.display="flex";
+  loader.style.display = "flex";
   try {
     const res = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"obtenerPerfilClub", username }) });
     const data = await res.json();
-    if(data.status==="ok"){ 
-      const p=data.perfil;
+    if(data.status==="ok"){ const p=data.perfil;
+     
       clubLogo.textContent=p.NombreClub||"Club Rugby";
       descripcionClub.textContent=p.Descripción||"";
-
-      // Animación palabra por palabra
-      setupQuienesSomosAnimation();
+                           // inicializar animación después de cargar la descripción
+setupQuienesSomosAnimation();
 
       portadaImg.src=p.Portada||"";
       perfilNombre.value=p.NombreClub||"";
@@ -262,30 +338,32 @@ async function cargarClub() {
       instagramLink.href=`https://instagram.com/${p.Instagram||""}`;
       if(p.Dirección) mapa.src=`https://maps.google.com/maps?q=${encodeURIComponent(p.Dirección)}&output=embed`;
     }
-    // Cargar partidos
+
     const res2 = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"listarEventos" }) });
     const rawPartidos = await res2.json();
-    const hoy = new Date();
-    const partidosNorm = rawPartidos.map(p=>{
+    function normalizePartido(raw){
       const ev={};
-      for(const k in p){ if(!p.hasOwnProperty(k)) continue; ev[k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'')]=p[k]; }
-      return ev;
-    });
-    const partidosFiltrados = partidosNorm.filter(p=> (p.estadoinvitacion||'').toLowerCase()==='aceptado' && (!p.fecha || new Date(p.fecha)>=hoy));
+      for(const k in raw){ if(!raw.hasOwnProperty(k)) continue;
+        const nk=k.toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'');
+        ev[nk]=raw[k];
+      }
+      return { id:ev.id||ev.idevento||ev.id, cluborganizador:ev.cluborganizador||'', estadoinvitacion:ev.estadoinvitacion||ev.estado||'', fecha:ev.fecha||'', lugar:ev.lugar||'', imagen:ev.imagen||'', _raw:raw };
+    }
+    const hoy=new Date();
+    const partidosNorm=rawPartidos.map(normalizePartido);
+    const partidosFiltrados=partidosNorm.filter(p=>{ const estado=(p.estadoinvitacion||'').toLowerCase(); const fechaEvento=p.fecha?new Date(p.fecha):null; return estado==='aceptado' && (!fechaEvento||fechaEvento>=hoy); });
     listaPartidos.innerHTML='';
-    if(partidosFiltrados.length===0) listaPartidos.innerHTML="<p>No hay partidos activos.</p>";
-    else partidosFiltrados.forEach(part=>{
-      const div=document.createElement("div");
-      div.className="partido-card";
-      div.innerHTML=`<img src="${part.imagen||'https://via.placeholder.com/600x300'}" alt="Partido">
-      <div class="partido-info">
-        <h3>${part.cluborganizador||'Club'}</h3>
-        <p><strong>Fecha:</strong> ${part.fecha}</p>
-        <p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p>
-      </div>`;
-      listaPartidos.appendChild(div);
-    });
-  } catch(err){ console.error(err); listaPartidos.innerHTML="<p>Error cargando datos.</p>"; }
+    if(partidosFiltrados.length===0){ listaPartidos.innerHTML="<p>No hay partidos activos.</p>"; }
+    else{
+      partidosFiltrados.forEach(part=>{
+        const div=document.createElement("div");
+        div.className="partido-card";
+        div.innerHTML=`<img src="${part.imagen||'https://via.placeholder.com/600x300'}" alt="Partido"><div class="partido-info"><h3>${part.cluborganizador||'Club'}</h3><p><strong>Fecha:</strong> ${part.fecha}</p><p><strong>Lugar:</strong> <a href="https://maps.google.com/?q=${encodeURIComponent(part.lugar)}" target="_blank">${part.lugar}</a></p></div>`;
+        listaPartidos.appendChild(div);
+      });
+    }
+
+  } catch(err){ console.error("Error:",err); clubName.textContent="Error cargando club"; listaPartidos.innerHTML="<p>Error al cargar partidos.</p>"; }
   finally{ loader.style.display="none"; }
 }
 
@@ -294,12 +372,13 @@ loginBtn.addEventListener("click", async ()=>{
   const pass=prompt("Ingrese contraseña de admin:");
   if(!pass) return;
   try{
-    const res=await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"loginClub", username, password:pass})});
-    const data=await res.json();
+    const res = await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"loginClub", username, password:pass}) });
+    const data = await res.json();
     if(data.status==="ok"){ alert("Bienvenido Admin"); desbloquearInputs(); loggedAsAdmin=true; document.getElementById("profileContainer").style.display="block"; guardarBtn.style.display="inline-block"; }
     else alert("Contraseña incorrecta");
   }catch(err){ console.error(err); alert("Error al loguear"); }
 });
+
 guardarBtn.addEventListener("click", async ()=>{
   if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
   const perfil={ username, NombreClub:perfilNombre.value, Dirección:perfilDireccion.value, Teléfono:perfilTelefono.value, Descripción:perfilDescripcion.value, WhatsApp:perfilWhatsapp.value, Instagram:perfilInstagram.value, Portada:perfilPortada.value };
@@ -311,62 +390,36 @@ guardarBtn.addEventListener("click", async ()=>{
   }catch(err){ alert("Error al guardar: "+err.message); }
 });
 
-// ---------------- Scroll y animaciones ----------------
-const sections=document.querySelectorAll("section");
+// ---------------- Animaciones scroll ----------------
+const sections = document.querySelectorAll("section");
 window.addEventListener("scroll", ()=>{ sections.forEach(sec=>{ if(sec.getBoundingClientRect().top<window.innerHeight-100) sec.classList.add("visible"); }); });
 
-// Ajustar altura hero según imagen
-function ajustarHero(){
-  if(!portadaImg.complete || portadaImg.naturalWidth===0) return;
-  const imgRatio=portadaImg.naturalHeight/portadaImg.naturalWidth;
-  const screenWidth=window.innerWidth;
-  document.querySelector(".hero").style.height=(screenWidth*imgRatio)+"px";
+
+  function ajustarHero() {
+  if (!portadaImg.complete || portadaImg.naturalWidth === 0) return;
+
+  const imgRatio = portadaImg.naturalHeight / portadaImg.naturalWidth;
+  const screenWidth = window.innerWidth;
+  const newHeight = screenWidth * imgRatio;
+
+  document.querySelector(".hero").style.height = newHeight + "px";
 }
+
+// Cuando carga la imagen
 portadaImg.addEventListener("load", ajustarHero);
+// También al redimensionar la ventana
 window.addEventListener("resize", ajustarHero);
 
-// Parallax simple
-window.addEventListener("scroll", ()=>{ portadaImg.style.transform=`translateY(${window.scrollY*0.3}px) translateX(-50%)`; });
+// ---------------- Parallax ----------------
+window.addEventListener("scroll", ()=>{ 
+  portadaImg.style.transform = 
+    `translateY(${window.scrollY*0.3}px) translateX(-50%)`; 
+});
 
-// ---------------- Animación palabra por palabra ----------------
-function setupQuienesSomosAnimation(){
-  const section=document.getElementById("quienesSomos");
-  const p=document.getElementById("descripcionClub");
-  const h2=section.querySelector("h2");
 
-  function splitText(el){
-    if(!el || el.dataset.split) return false;
-    const text=el.innerText.trim(); if(!text) return false;
-    el.dataset.split=true;
-    el.innerHTML=text.split(/\s+/).map(word=>`<span class="fade-word">${word}</span>`).join(" ");
-    return true;
-  }
-
-  if(splitText(h2)) start();
-  if(splitText(p)) start();
-  else{
-    const mo=new MutationObserver((mutations,obs)=>{
-      if(splitText(p)){ obs.disconnect(); start(); }
-    });
-    mo.observe(p,{ childList:true, subtree:true, characterData:true });
-  }
-
-  function start(){
-    const observer=new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          section.querySelectorAll(".fade-word").forEach((word,i)=>setTimeout(()=>word.classList.add("visible"), i*100));
-          observer.unobserve(section);
-        }
-      });
-    },{ threshold:0.3 });
-    observer.observe(section);
-  }
-}
-
-// ---------------- Inicializar ----------------
 cargarClub();
 </script>
+
 </body>
 </html>
 
