@@ -607,31 +607,33 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
   } catch(err){ console.error(err); alert("Error al loguear"); }
 });
 
-btnRecuperarPass.addEventListener("click", async ()=>{
+btnRecuperarPass.addEventListener("click", async () => {
   const email = prompt("Ingresa tu correo de administrador:");
-  if(!email) return;
+  if (!email) return;
 
-  console.log("Email ingresado por el usuario:", email); // <-- así se hace
+  console.log("Email ingresado por el usuario:", email);
+
+  // 🔹 Definí la clave temporal aquí
+  const claveTemporal = "123456"; // podés generar dinámicamente si querés
 
   try {
     const res = await fetch("/.netlify/functions/recuperarClave", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, clave: claveTemporal })
     });
 
     const data = await res.json();
-    if(data.status === "ok"){
+    if (data.status === "ok") {
       alert("Se envió un correo a " + email);
     } else {
       alert("Error: " + data.msg);
     }
-  } catch(err){
+  } catch (err) {
     console.error(err);
     alert("Error al enviar el correo");
   }
 });
-
 
 // ---------------- Guardar Perfil ----------------
 guardarModalBtn.addEventListener("click", async ()=>{
