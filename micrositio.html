@@ -608,6 +608,7 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
 });
 
 btnRecuperarPass.addEventListener("click", async ()=>{
+  console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS)
   const email = prompt("Ingresa tu correo de administrador:");
   if(!email) return;
 
