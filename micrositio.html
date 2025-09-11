@@ -219,6 +219,41 @@ section.visible { opacity:1; transform:translateY(0); }
     font-size: 1em; /* opcional: reduce tamaño si es necesario */
   }
 }
+/* Modal full screen */
+#profileModal {
+  display:none;
+  position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.6); /* fondo transparente */
+  z-index:3000;
+  justify-content:center;
+  align-items:center;
+}
+#profileModal .modal-content {
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  max-width:600px;
+  width:90%;
+  max-height:90%;
+  overflow-y:auto;
+  position:relative;
+}
+#profileModal .close {
+  position:absolute;
+  top:10px; right:15px;
+  font-size:1.5em;
+  cursor:pointer;
+}
+#modalLoader {
+  display:none;
+  width:50px; height:50px;
+  border:5px solid #ddd;
+  border-top:5px solid #000;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:20px auto 0 auto;
+}
 
 </style>
 </head>
@@ -276,17 +311,24 @@ section.visible { opacity:1; transform:translateY(0); }
   </div>
 </section>
 
-<!-- Admin form -->
-<div class="container" id="profileContainer">
-  <h2>Editar Perfil del Club</h2>
-  <label>Nombre del Club</label><input type="text" id="perfilNombre">
-  <label>Dirección</label><input type="text" id="perfilDireccion">
-  <label>Teléfono</label><input type="text" id="perfilTelefono">
-  <label>Quiénes somos</label><textarea id="perfilDescripcion" rows="4"></textarea>
-  <label>WhatsApp</label><input type="text" id="perfilWhatsapp">
-  <label>Instagram</label><input type="text" id="perfilInstagram">
-  <label>Portada (URL)</label><input type="text" id="perfilPortada">
+
+<!-- Modal Admin Fullscreen -->
+<div id="profileModal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>Editar Perfil del Club</h2>
+    <label>Nombre del Club</label><input type="text" id="perfilNombre">
+    <label>Dirección</label><input type="text" id="perfilDireccion">
+    <label>Teléfono</label><input type="text" id="perfilTelefono">
+    <label>Quiénes somos</label><textarea id="perfilDescripcion" rows="4"></textarea>
+    <label>WhatsApp</label><input type="text" id="perfilWhatsapp">
+    <label>Instagram</label><input type="text" id="perfilInstagram">
+    <label>Portada (URL)</label><input type="text" id="perfilPortada">
+    <button id="guardarBtn">Guardar Cambios</button>
+    <div id="modalLoader" class="spinner"></div>
+  </div>
 </div>
+
 <!-- Modal Login Admin -->
 <div id="modalLogin" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:3000;">
   <div style="background:#fff; padding:30px; border-radius:10px; max-width:400px; width:90%; text-align:center; position:relative;">
@@ -416,15 +458,54 @@ const btnRecuperarPass = document.getElementById("btnRecuperarPass");
 const cerrarModal = document.getElementById("cerrarModal");
 
 // Mostrar modal al presionar login
-loginBtn.addEventListener("click", () => {
-  modalLogin.style.display = "flex";
-  inputAdminPass.value = "";
-  inputAdminPass.focus();
-});
+// Elementos del modal
+const profileModal = document.getElementById("profileModal");
+const closeModal = document.getElementById("closeModal");
+const modalLoader = document.getElementById("modalLoader");
+
 
 // Cerrar modal
-cerrarModal.addEventListener("click", () => { modalLogin.style.display = "none"; });
-window.addEventListener("click", e => { if(e.target==modalLogin) modalLogin.style.display="none"; });
+closeModal.addEventListener("click", ()=>{
+  profileModal.style.display="none";
+});
+
+// Guardar cambios
+guardarBtn.addEventListener("click", async ()=>{
+  if(!loggedAsAdmin){ alert("Debe iniciar sesión como admin"); return; }
+  modalLoader.style.display="block"; // mostrar loader
+  const perfil = { 
+    username, 
+    NombreClub:perfilNombre.value, 
+    Dirección:perfilDireccion.value, 
+    Teléfono:perfilTelefono.value, 
+    Descripción:perfilDescripcion.value, 
+    WhatsApp:perfilWhatsapp.value, 
+    Instagram:perfilInstagram.value, 
+    Portada:perfilPortada.value 
+  };
+  try{
+    const res = await fetch(API_URL,{ 
+      method:"POST", 
+      headers:{"Content-Type":"application/json"}, 
+      body:JSON.stringify({action:"actualizarPerfilClub", ...perfil}) 
+    });
+    const data = await res.json();
+    modalLoader.style.display="none";
+    if(data.status==="ok"){ 
+      alert("Perfil guardado correctamente");
+      profileModal.style.display="none"; // cerrar modal
+      window.location.reload(); // recargar página
+    } else {
+      alert("Error: "+data.msg);
+    }
+  }catch(err){
+    modalLoader.style.display="none";
+    alert("Error al guardar: "+err.message);
+  }
+});
+
+
+
 
 // Ingresar admin
 btnIngresarAdmin.addEventListener("click", async ()=>{
@@ -437,7 +518,7 @@ btnIngresarAdmin.addEventListener("click", async ()=>{
       alert("Bienvenido Admin");
       desbloquearInputs();
       loggedAsAdmin = true;
-      document.getElementById("profileContainer").style.display = "block";
+      profileModal.style.display = "flex";
       guardarBtn.style.display = "inline-block";
       modalLogin.style.display = "none"; // cerrar modal
     } else {
